@@ -32,14 +32,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity memory_if is
-	port(clka : in std_logic;
-		 wea : in std_logic_vector (0 downto 0);
-		 addra : in std_logic_vector (10 downto 0);
-		 dina : in std_logic_vector (23 downto 0);
-		 clkb : in std_logic;
+	port(clkb : in std_logic;
 		 enb : in std_logic;
 		 addrb : in std_logic_vector (10 downto 0);
-		 doutb : out std_logic_vector (23 downto 0));
+		 doutb : out std_logic_vector (23 downto 0);
+		 
+		 -- van audiointerface
+		 b_clk : in std_logic;
+		 sdata_out : in std_logic);
 end memory_if;
 
 architecture Behavioral of memory_if is
@@ -57,11 +57,15 @@ COMPONENT FIFO
   );
 END COMPONENT;
 
+  signal counter : integer range 0 to 2048 := 0;
+  signal b_counter : integer range 0 to 23 := 0;
+  signal doutb : std_logic;
+
 begin
 
-inst_memory_if : FIFO
+inst_fifo : FIFO
   PORT MAP (
-    clka => clka,
+    clka => b_clk,
     wea => wea,
     addra => addra,
     dina => dina,
@@ -70,5 +74,30 @@ inst_memory_if : FIFO
     addrb => addrb,
     doutb => doutb
   );
+  
+-- make addra
+process
+begin
+	if(counter = 2048) then
+		counter <= 0;
+	end if;
+	addra <= std_logic_vector(to_unsigned(counter, addra'length));
+end process;
+
+-- write data in fifo, make serial data parallel
+process (b_clk)
+begin
+	if(falling_edge(b_clk)) then
+		if(b_counter = 23) then
+			b_counter <= 0;
+			wea <= '1';
+			counter <= counter + 1;
+		else
+			b_counter <= b_counter + 1;
+			wea <= '0';
+		end if;
+		dina(b_counter) <= sdata_out;
+	end if;
+end process;
 
 end Behavioral;
