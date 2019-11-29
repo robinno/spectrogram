@@ -45,8 +45,10 @@ entity mem_interface_beeld is
 		
 		--writing side:
 		new_entry_clk: in std_logic;
-		
-		new_entry: in std_logic
+		new_entry: in std_logic_vector(6 downto 0);
+		new_entry_valid: in std_logic;
+		new_entry_counter: in integer range 0 to 2047;
+		new_entry_last: in std_logic
 	);
 end mem_interface_beeld;
 
@@ -151,17 +153,18 @@ architecture Behavioral of mem_interface_beeld is
 	constant circ_X_stop: integer := 665;
 	constant circ_Y_stop: integer := 543;
 	
+	signal X: integer range 0 to Breedte := circ_X_start; --houdt bij waar in circulaire buffer.
+	
 	--signals for reading:
 	signal LeesAdres: std_logic_vector(18 downto 0) := (others => '0');
 	signal LeesData: std_logic_vector(6 downto 0) := (others => '0');
 	signal RGB: std_logic_vector(11 downto 0) := (others => '0');
 	signal inCircBuffer: std_logic := '0';
 	
-	
 	--signals for writing:
 	signal writeAdres: std_logic_vector(18 downto 0) := (others => '0');
 	signal writeData: std_logic_vector(6 downto 0) := (others => '0');
-	signal wea: std_logic_vector(0 downto 0) := (others => '1');
+	signal wea: std_logic_vector(0 downto 0) := (others => '0');
 begin
 
 	--READING:
@@ -180,39 +183,58 @@ begin
 	VGA_G <= RGB(7 downto 4);
 	VGA_B <= RGB(3 downto 0);
 
-	--WRITING:
-	--TODO
+	-- WRITING:
+	
 	process(new_entry_clk)
-		variable teller : integer range 0 to 75 := 0;
-		
-		variable X: integer range 0 to Breedte := circ_X_start;
 		variable Y: integer range 0 to Hoogte := circ_Y_start;
 	begin
-		if rising_edge(new_entry_clk) then			
-
-			Y  := Y + 1;
-			
-			--randgevallen
-			if (Y >= circ_Y_stop) then
-				Y := circ_Y_start;
-				X := X + 1;
-				teller := teller + 1;
+		if(rising_edge(new_entry_clk)) then
+			if(new_entry_valid = '1') then
+				wea <= (others => '1');
+			else
+				wea <= (others => '0');
 			end if;
 			
-			if (X >= circ_X_stop) then
-				X := circ_X_start;
-				teller := 0;
+			if(new_entry_last = '1') then
+				
 			end if;
-			
-			if(teller >= 75) then
-				teller := 0;
-			end if;
-			
 		end if;
 		
-		writeAdres 	<= std_logic_vector(to_unsigned(X + Y * Breedte, 19));
-		writeData 	<= std_logic_vector(to_unsigned(teller, 7));
 	end process;
+	
+	--TESTING:
+	-- --TODO
+	-- process(new_entry_clk)
+		-- variable teller : integer range 0 to 75 := 0;
+		
+		-- variable X: integer range 0 to Breedte := circ_X_start;
+		-- variable Y: integer range 0 to Hoogte := circ_Y_start;
+	-- begin
+		-- if rising_edge(new_entry_clk) then			
+
+			-- Y  := Y + 1;
+			
+			-- --randgevallen
+			-- if (Y >= circ_Y_stop) then
+				-- Y := circ_Y_start;
+				-- X := X + 1;
+				-- teller := teller + 1;
+			-- end if;
+			
+			-- if (X >= circ_X_stop) then
+				-- X := circ_X_start;
+				-- teller := 0;
+			-- end if;
+			
+			-- if(teller >= 75) then
+				-- teller := 0;
+			-- end if;
+			
+		-- end if;
+		
+		-- writeAdres 	<= std_logic_vector(to_unsigned(X + Y * Breedte, 19));
+		-- writeData 	<= std_logic_vector(to_unsigned(teller, 7));
+	-- end process;
 	
 	
 

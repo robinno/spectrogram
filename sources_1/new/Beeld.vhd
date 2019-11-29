@@ -43,7 +43,10 @@ entity Beeld is
 		
 		--writing side:
 		new_entry_clk: in std_logic;
-		new_entry: in std_logic
+		new_entry: in std_logic_vector(6 downto 0);
+		new_entry_valid: in std_logic;
+		new_entry_counter: in integer range 0 to 2047;
+		new_entry_last: in std_logic
 	);
 end Beeld;
 
@@ -74,8 +77,10 @@ architecture Behavioral of Beeld is
 			
 			--writing side:
 			new_entry_clk: in std_logic;
-			
-			new_entry: in std_logic
+			new_entry: in std_logic_vector(6 downto 0);
+			new_entry_valid: in std_logic;
+			new_entry_counter: in integer range 0 to 2047;
+			new_entry_last: in std_logic
 		);
 	end component;
 
@@ -84,11 +89,6 @@ architecture Behavioral of Beeld is
 	signal s_active_video: std_logic;
 
 begin
-
-
-
-
-
 
 	-----------------
 	--	Components --
@@ -119,7 +119,10 @@ begin
 			
 			
 			new_entry_clk => new_entry_clk,
-			new_entry => new_entry
+			new_entry => new_entry,
+			new_entry_valid => new_entry_valid,
+			new_entry_counter => new_entry_counter,
+			new_entry_last => new_entry_last
 		);
 
 

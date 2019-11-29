@@ -65,6 +65,27 @@ architecture Behavioral of top is
 			sys_clk           : in     std_logic
 		);
 	end component;
+	
+	component fft_controller is
+		generic(
+			transform_length: integer := 2048;
+			blk_exp_length : integer := 5;
+			din_width : integer := 24;
+			dout_width: integer := 7;
+			tdata_width : integer := 48
+		);
+		Port (
+			clk : in STD_LOGIC;
+			counter_in : in integer range 0 to transform_length-1;
+			addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
+			dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
+			ena_ram : out STD_LOGIC;
+			dout : out STD_LOGIC_VECTOR(dout_width-1 downto 0);
+			dout_valid : out STD_LOGIC; --Asserted when able to provide sample data
+			dout_last : out STD_LOGIC; --Asserted on the last sample of the frame.
+			dout_counter: out integer range 0 to transform_length-1
+			);
+	end component;
 
 	component Beeld is
 		Port ( 
@@ -78,7 +99,10 @@ architecture Behavioral of top is
 			
 					
 			new_entry_clk: in std_logic;
-			new_entry: in std_logic
+			new_entry: in std_logic_vector(6 downto 0);
+			new_entry_valid: in std_logic;
+			new_entry_counter: in integer range 0 to 2047;
+			new_entry_last: in std_logic
 		);
 	end component;
 	
@@ -112,10 +136,13 @@ architecture Behavioral of top is
 	signal FFT_clk: std_logic := '0';
 	signal Audio_clk: std_logic := '0';
 	
-	signal sample_clk : std_logic;
-	signal sample_l, sample_r, sample_l_in, sample_r_in : std_logic_vector(23 downto 0);
+	signal sample_clk : std_logic := '0';
+	signal sample_l, sample_r, sample_l_in, sample_r_in : std_logic_vector(23 downto 0) := (others => '0');
 	
-	signal output_FFT: std_logic := '0'; --TODO
+	signal output_FFT: std_logic_vector(6 downto 0) := (others => '0'); --TODO
+	signal output_FFT_valid: std_logic := '0';
+	signal output_FFT_counter: integer range 0 to 2047 := 0;
+	signal output_FFT_last: std_logic := '0';
 begin
 
 	
@@ -140,8 +167,24 @@ begin
 			
 			
 			new_entry_clk => FFT_clk,
-			new_entry => output_FFT
+			new_entry => output_FFT,
+			new_entry_valid => output_FFT_valid,
+			new_entry_counter => output_FFT_counter,
+			new_entry_last => new_entry_last
 		);
+		
+	fft_controller_inst: fft_controller
+		Port map(
+			clk => FFT_clk,
+			counter_in : in integer range 0 to transform_length-1;
+			addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
+			dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
+			ena_ram : out STD_LOGIC;
+			dout => output_FFT,
+			dout_valid => output_FFT_valid, --Asserted when able to provide sample data
+			dout_last => output_FFT_last, --Asserted on the last sample of the frame.
+			dout_counter => output_FFT_counter
+			);
 		
 	Audio_inst: audio_if
 		port map(
