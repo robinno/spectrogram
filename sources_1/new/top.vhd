@@ -131,6 +131,16 @@ architecture Behavioral of top is
         sdata_out: out std_logic);
 	end component;
 	
+	component memory_if is
+		port(clkb : in std_logic;
+			 enb : in std_logic;
+			 addrb : in std_logic_vector (10 downto 0);
+			 doutb : out std_logic_vector (23 downto 0);
+			 
+			 -- van audiointerface
+			 b_clk : in std_logic;
+			 sdata_out : in std_logic);
+	end component;
 	
 	signal VGA_clk: std_logic := '0';
 	signal FFT_clk: std_logic := '0';
@@ -202,6 +212,16 @@ begin
 		sample_r => sample_r,
 		sample_l_in => sample_l,
 		sample_r_in => sample_r,   -- loopback
+		sdata_out => sdata_out);
+		
+	inst_memory_if : memory_if
+		port map(
+		clkb => clkb,
+		enb => enb,
+		addrb => addrb,
+		doutb => doutb,
+				 
+		b_clk => b_clk,
 		sdata_out => sdata_out);
 	
 end Behavioral;
