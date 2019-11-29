@@ -52,7 +52,7 @@
 -- The following code must appear in the VHDL architecture header.
 
 ------------- Begin Cut here for COMPONENT Declaration ------ COMP_TAG
-COMPONENT mult_gen_0
+COMPONENT multiplier
   PORT (
     CLK : IN STD_LOGIC;
     A : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
@@ -66,7 +66,7 @@ END COMPONENT;
 -- body. Substitute your own instance name and net names.
 
 ------------- Begin Cut here for INSTANTIATION Template ----- INST_TAG
-your_instance_name : mult_gen_0
+your_instance_name : multiplier
   PORT MAP (
     CLK => CLK,
     A => A,
@@ -75,7 +75,7 @@ your_instance_name : mult_gen_0
   );
 -- INST_TAG_END ------ End INSTANTIATION Template ---------
 
--- You must compile the wrapper file mult_gen_0.vhd when simulating
--- the core, mult_gen_0. When compiling the wrapper file, be sure to
+-- You must compile the wrapper file multiplier.vhd when simulating
+-- the core, multiplier. When compiling the wrapper file, be sure to
 -- reference the VHDL simulation library.
 

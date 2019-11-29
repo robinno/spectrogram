@@ -54,7 +54,7 @@
 // (in parentheses) to your own signal names.
 
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
-mult_gen_0 your_instance_name (
+multiplier your_instance_name (
   .CLK(CLK),  // input wire CLK
   .A(A),      // input wire [23 : 0] A
   .B(B),      // input wire [7 : 0] B
@@ -62,7 +62,7 @@ mult_gen_0 your_instance_name (
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 
-// You must compile the wrapper file mult_gen_0.v when simulating
-// the core, mult_gen_0. When compiling the wrapper file, be sure to
+// You must compile the wrapper file multiplier.v when simulating
+// the core, multiplier. When compiling the wrapper file, be sure to
 // reference the Verilog simulation library.
 

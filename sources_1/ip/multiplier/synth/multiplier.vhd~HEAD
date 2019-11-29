@@ -56,18 +56,18 @@ USE ieee.numeric_std.ALL;
 LIBRARY mult_gen_v12_0_16;
 USE mult_gen_v12_0_16.mult_gen_v12_0_16;
 
-ENTITY mult_gen_0 IS
+ENTITY multiplier IS
   PORT (
     CLK : IN STD_LOGIC;
     A : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
     B : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
     P : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
   );
-END mult_gen_0;
+END multiplier;
 
-ARCHITECTURE mult_gen_0_arch OF mult_gen_0 IS
+ARCHITECTURE multiplier_arch OF multiplier IS
   ATTRIBUTE DowngradeIPIdentifiedWarnings : STRING;
-  ATTRIBUTE DowngradeIPIdentifiedWarnings OF mult_gen_0_arch: ARCHITECTURE IS "yes";
+  ATTRIBUTE DowngradeIPIdentifiedWarnings OF multiplier_arch: ARCHITECTURE IS "yes";
   COMPONENT mult_gen_v12_0_16 IS
     GENERIC (
       C_VERBOSITY : INTEGER;
@@ -100,6 +100,12 @@ ARCHITECTURE mult_gen_0_arch OF mult_gen_0 IS
       P : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
     );
   END COMPONENT mult_gen_v12_0_16;
+  ATTRIBUTE X_CORE_INFO : STRING;
+  ATTRIBUTE X_CORE_INFO OF multiplier_arch: ARCHITECTURE IS "mult_gen_v12_0_16,Vivado 2019.2";
+  ATTRIBUTE CHECK_LICENSE_TYPE : STRING;
+  ATTRIBUTE CHECK_LICENSE_TYPE OF multiplier_arch : ARCHITECTURE IS "multiplier,mult_gen_v12_0_16,{}";
+  ATTRIBUTE CORE_GENERATION_INFO : STRING;
+  ATTRIBUTE CORE_GENERATION_INFO OF multiplier_arch: ARCHITECTURE IS "multiplier,mult_gen_v12_0_16,{x_ipProduct=Vivado 2019.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=mult_gen,x_ipVersion=12.0,x_ipCoreRevision=16,x_ipLanguage=VHDL,x_ipSimLanguage=MIXED,C_VERBOSITY=0,C_MODEL_TYPE=0,C_OPTIMIZE_GOAL=1,C_XDEVICEFAMILY=zynq,C_HAS_CE=0,C_HAS_SCLR=0,C_LATENCY=1,C_A_WIDTH=24,C_A_TYPE=0,C_B_WIDTH=8,C_B_TYPE=1,C_OUT_HIGH=31,C_OUT_LOW=8,C_MULT_TYPE=1,C_CE_OVERRIDES_SCLR=0,C_CCM_IMP=0,C_B_VALUE=10000001,C_HAS_ZERO_DETECT=0,C_ROUND_OUTPUT=0,C_ROUND_PT=0}";
   ATTRIBUTE X_INTERFACE_INFO : STRING;
   ATTRIBUTE X_INTERFACE_PARAMETER : STRING;
   ATTRIBUTE X_INTERFACE_PARAMETER OF P: SIGNAL IS "XIL_INTERFACENAME p_intf, LAYERED_METADATA undef";
@@ -142,4 +148,4 @@ BEGIN
       SCLR => '0',
       P => P
     );
-END mult_gen_0_arch;
+END multiplier_arch;
