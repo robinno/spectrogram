@@ -52,7 +52,7 @@ entity fft_controller is
 		);
 end fft_controller;
 
--- architecture Behavioral of fft_controller is
+architecture Behavioral of fft_controller is
 
 	COMPONENT fft_ip
 	  PORT (
