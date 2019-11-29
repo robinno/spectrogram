@@ -36,6 +36,7 @@ entity fft_controller is
 		transform_length: integer := 2048;
 		blk_exp_length : integer := 5;
 		din_width : integer := 24;
+		dout_width: integer := 7;
 		tdata_width : integer := 48
 	);
 	Port (
@@ -44,7 +45,7 @@ entity fft_controller is
 		addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
 		dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
 		ena_ram : out STD_LOGIC;
-		dout : out STD_LOGIC_VECTOR(din_width+(2**blk_exp_length)-1 downto 0);
+		dout : out STD_LOGIC_VECTOR(dout_width-1 downto 0);
 		dout_valid : out STD_LOGIC; --Asserted when able to provide sample data
 		dout_last : out STD_LOGIC; --Asserted on the last sample of the frame.
 		dout_counter: out integer range 0 to transform_length-1
@@ -77,28 +78,44 @@ architecture Behavioral of fft_controller is
 	  );
 	END COMPONENT;
 	
+	COMPONENT multiplier
+	  PORT (
+		CLK : IN STD_LOGIC;
+		A : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+		B : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+		P : OUT STD_LOGIC_VECTOR(23 DOWNTO 0)
+	  );
+	END COMPONENT;
+	  
+	COMPONENT window
+	  PORT (
+		clka : IN STD_LOGIC;
+		ena : IN STD_LOGIC;
+		addra : IN STD_LOGIC_VECTOR(10 DOWNTO 0);
+		douta : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+	  );
+	END COMPONENT;
+	
+	--signals for window and multiplier
+	signal wind_dout : STD_LOGIC_VECTOR(7 DOWNTO 0);
+	signal mult_out : STD_LOGIC_VECTOR(23 DOWNTO 0);
+	
 	--Signals for fft_ip
     signal s_aresetn :  STD_LOGIC := '1';
-    --signal s_s_axis_tvalid :  STD_LOGIC := '0'; --connected to 's_axis_config_tvalid' and 's_axis_data_tvalid'
     signal s_s_axis_tready :  STD_LOGIC; --connected to 's_axis_config_tready' and 's_s_axis_data_tready'
-    --signal s_s_axis_data_tdata :  STD_LOGIC_VECTOR(47 DOWNTO 0);
     signal s_s_axis_data_tlast :  STD_LOGIC := '0';
-    --signal s_m_axis_data_tdata :  STD_LOGIC_VECTOR(47 DOWNTO 0);
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
-    --signal s_m_axis_data_tvalid :  STD_LOGIC;
-    --signal s_m_axis_data_tlast :  STD_LOGIC;
-    --signal s_m_axis_status_tdata :  STD_LOGIC_VECTOR(7 DOWNTO 0);
-    --signal s_m_axis_status_tvalid :  STD_LOGIC;
-    --signal s_event_frame_started :  STD_LOGIC;
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
     signal s_event_data_in_channel_halt :  STD_LOGIC;
+	signal s_din_valid : STD_LOGIC;
 	
 	signal fifo_full: STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
 	signal blk_exp: natural range 0 to (2**blk_exp_length) -1;
 	signal fft_dout: STD_LOGIC_VECTOR(din_width-1 downto 0);
 	signal counter_fft : integer range 0 to transform_length-1;
+	signal s_adr : STD_LOGIC_VECTOR(10 downto 0);
 	
 	signal temp: STD_LOGIC_VECTOR(din_width-1 downto 0);
 	
@@ -108,11 +125,11 @@ begin
 		aclk => clk,
 		aresetn => s_aresetn,
 		s_axis_config_tdata => x"01",
-		s_axis_config_tvalid => fifo_read,
+		s_axis_config_tvalid => s_din_valid,
 		s_axis_config_tready => s_s_axis_tready,
 		s_axis_data_tdata(tdata_width-1 downto din_width) => (others => '0'),
-		s_axis_data_tdata(din_width-1 downto 0) => dout_ram,
-		s_axis_data_tvalid => fifo_read,
+		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
+		s_axis_data_tvalid => s_din_valid,
 		s_axis_data_tready => open,
 		s_axis_data_tlast => s_s_axis_data_tlast,
 		m_axis_data_tdata(tdata_width-1 downto din_width) => temp,--liever open maar werkt niet
@@ -130,9 +147,24 @@ begin
 	
 	blk_exp <= to_integer(unsigned(s_m_axis_data_tuser(20 downto 16) ));
 	--dout <= shift_left(unsigned(fft_dout), blk_exp);
-	dout(din_width-1 downto 0) <= fft_dout;
-	dout(din_width+(2**blk_exp_length)-1 downto din_width) <= (others => '0');
+	dout(dout_width-1 downto 0) <= fft_dout;
 	dout_counter <= to_integer(unsigned(s_m_axis_data_tuser(10 downto 0) ));
+	
+	INST_window : window
+	  PORT MAP (
+		clka => clk,
+		ena => fifo_read,
+		addra => s_adr,
+		douta => wind_dout
+	  );
+	
+	INST_multiplier : multiplier
+	  PORT MAP (
+		CLK => clk,
+		A => dout_ram,
+		B => wind_dout,
+		P => mult_out
+	  );
 	
 	process(clk) --fifo_full en fifo_read maken
 	begin
@@ -148,6 +180,7 @@ begin
 			else
 				fifo_read <= '0';
 			end if;
+			s_din_valid <= fifo_read;--1 tick latency for valid to compensate latency of window multiplication
 		end if;
 	end process;
 	
@@ -168,9 +201,8 @@ begin
 		end if;
 	end process;
 	ena_ram <= fifo_read;
-	addr_ram <= std_logic_vector(to_unsigned(counter_fft, 11));
-	
-	
+	s_adr <= std_logic_vector(to_unsigned(counter_fft, 11));
+	addr_ram <= s_adr;	
 
 
 end Behavioral;
