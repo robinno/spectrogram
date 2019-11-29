@@ -149,10 +149,21 @@ architecture Behavioral of top is
 	signal sample_clk : std_logic := '0';
 	signal sample_l, sample_r, sample_l_in, sample_r_in : std_logic_vector(23 downto 0) := (others => '0');
 	
+	--signalen tussen FFT en Beeld
 	signal output_FFT: std_logic_vector(6 downto 0) := (others => '0'); --TODO
 	signal output_FFT_valid: std_logic := '0';
 	signal output_FFT_counter: integer range 0 to 2047 := 0;
 	signal output_FFT_last: std_logic := '0';
+	
+	--signalen tussen FFT en FIFO
+	signal read_FIFO_ena: std_logic := '0';
+	signal read_FIFO_addr: std_logic_vector(10 downto 0) := (other => '0');
+	signal read_FIFO_data: std_logic_vector(23 downto 0) := (other => '0');
+	signal read_FIFO_counter_in: integer range 0 to 2047 := 0;
+	
+	--signalen tussen audio en FIFO
+	signal audio_out_clk : std_logic := '0';
+	signal audio_out_data : std_logic := '0';
 begin
 
 	
@@ -186,10 +197,10 @@ begin
 	fft_controller_inst: fft_controller
 		Port map(
 			clk => FFT_clk,
-			counter_in : in integer range 0 to transform_length-1;
-			addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
-			dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
-			ena_ram : out STD_LOGIC;
+			counter_in => read_FIFO_counter_in,
+			addr_ram => read_FIFO_addr,
+			dout_ram => read_FIFO_data,
+			ena_ram => read_FIFO_ena,
 			dout => output_FFT,
 			dout_valid => output_FFT_valid, --Asserted when able to provide sample data
 			dout_last => output_FFT_last, --Asserted on the last sample of the frame.
@@ -202,7 +213,7 @@ begin
 		s_clk_12M288 => Audio_clk,
 		m_clk => m_clk,
 		lr_clk => lr_clk,
-		b_clk => b_clk,
+		b_clk => audio_out_clk,
 		sdata => sdata,
 		sda => sda,
 		scl => scl,
@@ -212,16 +223,17 @@ begin
 		sample_r => sample_r,
 		sample_l_in => sample_l,
 		sample_r_in => sample_r,   -- loopback
-		sdata_out => sdata_out);
+		sdata_out => audio_out_data);
 		
 	inst_memory_if : memory_if
 		port map(
-		clkb => clkb,
-		enb => enb,
-		addrb => addrb,
-		doutb => doutb,
-				 
-		b_clk => b_clk,
-		sdata_out => sdata_out);
+			clkb => FFT_clk,
+			enb => read_FIFO_ena,
+			addrb => read_FIFO_addr,
+			doutb => read_FIFO_data,
+					 
+			b_clk => audio_out_clk,
+			sdata_out => audio_out_data
+		);
 	
 end Behavioral;
