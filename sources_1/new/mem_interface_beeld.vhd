@@ -184,22 +184,31 @@ begin
 	VGA_B <= RGB(3 downto 0);
 
 	-- WRITING:
-	
 	process(new_entry_clk)
 		variable Y: integer range 0 to Hoogte := circ_Y_start;
 	begin
 		if(rising_edge(new_entry_clk)) then
 			if(new_entry_valid = '1') then
 				wea <= (others => '1');
+				
+				Y := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 2048;
 			else
 				wea <= (others => '0');
 			end if;
 			
 			if(new_entry_last = '1') then
-				
+				Y := circ_Y_start;
+				if(X >= circ_X_stop) then
+					X <= circ_X_start; 
+				else
+					X <= X + 1;
+				end if;
 			end if;
+			
+			
 		end if;
-		
+		writeAdres 	<= 	std_logic_vector(to_unsigned(X + Y * Breedte, 19));
+		writeData	<= 	new_entry;
 	end process;
 	
 	--TESTING:

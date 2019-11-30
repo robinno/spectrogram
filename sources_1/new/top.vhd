@@ -157,8 +157,8 @@ architecture Behavioral of top is
 	
 	--signalen tussen FFT en FIFO
 	signal read_FIFO_ena: std_logic := '0';
-	signal read_FIFO_addr: std_logic_vector(10 downto 0) := (other => '0');
-	signal read_FIFO_data: std_logic_vector(23 downto 0) := (other => '0');
+	signal read_FIFO_addr: std_logic_vector(10 downto 0) := (others => '0');
+	signal read_FIFO_data: std_logic_vector(23 downto 0) := (others => '0');
 	signal read_FIFO_counter_in: integer range 0 to 2047 := 0;
 	
 	--signalen tussen audio en FIFO
@@ -191,7 +191,7 @@ begin
 			new_entry => output_FFT,
 			new_entry_valid => output_FFT_valid,
 			new_entry_counter => output_FFT_counter,
-			new_entry_last => new_entry_last
+			new_entry_last => output_FFT_last
 		);
 		
 	fft_controller_inst: fft_controller
