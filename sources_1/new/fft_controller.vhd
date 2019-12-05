@@ -190,9 +190,14 @@ begin
 			if(fifo_read = '1') then
 				if(counter_fft < transform_length-1) then
 					counter_fft <= counter_fft + 1;
+					if(counter_fft = transform_length-2) then
+						s_s_axis_data_tlast <= '1';
+					else
+						s_s_axis_data_tlast <= '0';
+					end if;
 				else
 					counter_fft <= 0;
-					s_s_axis_data_tlast <= '1';
+					s_s_axis_data_tlast <= '0';
 				end if;
 			else
 				counter_fft <= 0;
