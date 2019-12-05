@@ -142,9 +142,11 @@ architecture Behavioral of top is
 			 sdata_out : in std_logic);
 	end component;
 	
+	--clk signalen
 	signal VGA_clk: std_logic := '0';
 	signal FFT_clk: std_logic := '0';
 	signal Audio_clk: std_logic := '0';
+	signal clk_96MHz: std_logic := '0';
 	
 	signal sample_clk : std_logic := '0';
 	signal sample_l, sample_r, sample_l_in, sample_r_in : std_logic_vector(23 downto 0) := (others => '0');
@@ -169,7 +171,7 @@ begin
 	
 	clk_deler : clk_wiz_0
 		port map ( 
-			clk_96MHz => open,
+			clk_96MHz => clk_96MHz,
 			clk_VGA => VGA_clk,
 			clk_FFT => FFT_clk,
 			clk_audio => Audio_clk,
@@ -209,7 +211,7 @@ begin
 		
 	Audio_inst: audio_if
 		port map(
-		clk_100M_in => sys_clk,
+		clk_100M_in => clk_96MHz,
 		s_clk_12M288 => Audio_clk,
 		m_clk => m_clk,
 		lr_clk => lr_clk,

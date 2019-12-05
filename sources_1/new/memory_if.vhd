@@ -58,11 +58,10 @@ COMPONENT FIFO
 END COMPONENT;
 
   signal counter : integer range 0 to 2048 := 0;
-  
-  signal wea : std_logic_vector(0 downto 0);
-  signal addra : std_logic_vector(10 downto 0);
-  signal dina : std_logic_vector(23 downto 0);
-  signal dout_parallel : std_logic_vector(23 downto 0);
+  signal b_counter : integer range 0 to 23 := 0;
+  signal wea : std_logic_vector(0 downto 0) := (others => '1');
+  signal addra : std_logic_vector(10 downto 0) := (others => '1');
+  signal dina : std_logic_vector(23 downto 0) := (others => '1');
   
 
 begin
