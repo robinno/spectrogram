@@ -169,34 +169,6 @@ architecture Behavioral of top is
 	signal audio_out_clk : std_logic := '0';
 	signal audio_out_data : std_logic := '0';
 	
-	
-	--ILA
-	
-	-- COMPONENT ila_0
-		-- PORT (
-			-- clk : IN STD_LOGIC;
-
-			-- probe0 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); 
-			-- probe1 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); 
-			-- probe2 : IN STD_LOGIC_VECTOR(6 DOWNTO 0); 
-			-- probe3 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); 
-			-- probe4 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); 
-			-- probe5 : IN STD_LOGIC_VECTOR(10 DOWNTO 0); 
-			-- probe6 : IN STD_LOGIC_VECTOR(23 DOWNTO 0); 
-			-- probe7 : IN STD_LOGIC_VECTOR(10 DOWNTO 0); 
-			-- probe8 : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-			-- probe9 : IN STD_LOGIC_VECTOR(0 DOWNTO 0)
-		-- );
-	-- END COMPONENT  ;
-	
-	-- --signals voor ILA
-	-- signal probe0 : std_logic_vector(0 downto 0) := (others => '0');
-	-- signal probe1 : std_logic_vector(0 downto 0) := (others => '0');
-	-- signal probe3 : std_logic_vector(0 downto 0) := (others => '0');
-	-- signal probe4 : std_logic_vector(0 downto 0) := (others => '0');
-	-- signal probe8 : std_logic_vector(0 downto 0) := (others => '0');
-	-- signal probe9 : std_logic_vector(0 downto 0) := (others => '0');
-	
 begin
 
 	
@@ -275,30 +247,5 @@ begin
 	--audio loopback signals:
 	sdata_out <= audio_out_data;
 	b_clk <= audio_out_clk;
-	
-	
-	--ILA
-	-- your_instance_name : ila_0
-	-- PORT MAP (
-		-- clk => clk_96MHz,
-
-		-- probe0 => probe0, 
-		-- probe1 => probe1, 
-		-- probe2 => output_FFT, 
-		-- probe3 => probe3, 
-		-- probe4 => probe4, 
-		-- probe5 => read_FIFO_addr, 
-		-- probe6 => read_FIFO_data, 
-		-- probe7 => std_logic_vector(to_unsigned(read_FIFO_counter_in, 11)), 
-		-- probe8 => probe8,
-		-- probe9 => probe9
-	-- );
-	
-	-- probe0(0) <= FFT_clk;
-	-- probe1(0) <= Audio_clk;
-	-- probe3(0) <= output_FFT_valid;
-	-- probe4(0) <= read_FIFO_ena;
-	-- probe8(0) <= audio_out_clk;
-	-- probe9(0) <= audio_out_data;
 	
 end Behavioral;
