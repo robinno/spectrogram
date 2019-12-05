@@ -36,6 +36,7 @@ entity tb_fft_controller is
 		transform_length: integer := 2048;
 		blk_exp_length : integer := 5;
 		din_width : integer := 24;
+		dout_width: integer := 7;
 		tdata_width : integer := 48
 	);
 --  Port ( );
@@ -44,11 +45,12 @@ end tb_fft_controller;
 architecture Behavioral of tb_fft_controller is
 
 
-	component fft_controller
+	component fft_controller is
 		generic(
 			transform_length: integer := 2048;
 			blk_exp_length : integer := 5;
 			din_width : integer := 24;
+			dout_width: integer := 7;
 			tdata_width : integer := 48
 		);
 		Port (
@@ -57,10 +59,10 @@ architecture Behavioral of tb_fft_controller is
 			addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
 			dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
 			ena_ram : out STD_LOGIC;
-			dout : out STD_LOGIC_VECTOR(din_width+(2**blk_exp_length)-1 downto 0);
+			dout : out STD_LOGIC_VECTOR(dout_width-1 downto 0);
 			dout_valid : out STD_LOGIC; --Asserted when able to provide sample data
 			dout_last : out STD_LOGIC; --Asserted on the last sample of the frame.
-			dout_counter: OUT integer range 0 to transform_length-1
+			dout_counter: out integer range 0 to transform_length-1
 			);
 	end component;
 	
@@ -83,7 +85,7 @@ architecture Behavioral of tb_fft_controller is
 	signal addr_ram :STD_LOGIC_VECTOR(10 downto 0);
 	signal dout_ram :STD_LOGIC_VECTOR(din_width-1 downto 0);
 	signal ena_ram :STD_LOGIC;
-	signal dout :STD_LOGIC_VECTOR(din_width+(2**blk_exp_length)-1 downto 0);
+	signal dout :STD_LOGIC_VECTOR(dout_width-1 downto 0);
 	signal dout_valid :STD_LOGIC;
 	signal dout_last :STD_LOGIC;
 	signal dout_counter: integer range 0 to transform_length-1;
