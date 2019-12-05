@@ -58,10 +58,11 @@ COMPONENT FIFO
 END COMPONENT;
 
   signal counter : integer range 0 to 2048 := 0;
-  signal b_counter : integer range 0 to 23 := 0;
+  
   signal wea : std_logic_vector(0 downto 0);
   signal addra : std_logic_vector(10 downto 0);
   signal dina : std_logic_vector(23 downto 0);
+  signal dout_parallel : std_logic_vector(23 downto 0);
   
 
 begin
@@ -87,20 +88,29 @@ begin
 	addra <= std_logic_vector(to_unsigned(counter, addra'length));
 end process;
 
--- write data in fifo, make serial data parallel
-process (b_clk)
+-- write parallel data in dina
+process 
 begin
-	if(falling_edge(b_clk)) then
-		if(b_counter = 23) then
-			b_counter <= 0;
-			wea <= "1";
-			counter <= counter + 1;
-		else
-			b_counter <= b_counter + 1;
-			wea <= "0";
-		end if;
-		dina(b_counter) <= sdata_out;
+	if(wea = "1") then
+		dina <= dout_parallel;
+		counter <= counter + 1;
 	end if;
+end process;
+
+--SIPO
+process(b_clk)
+variable b_counter : integer range 0 to 23 := 0;
+begin
+	if(rising_edge(b_clk)) then
+		dout_parallel <= dout_parallel(22 downto 0) & sdata_out;
+		b_counter := b_counter + 1;
+	end if;
+	if(b_counter = 23) then
+		wea <= "1";
+		b_counter := 0;
+	else
+		wea <= "0";
+end if;
 end process;
 
 end Behavioral;
