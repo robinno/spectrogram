@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -59,7 +59,10 @@ END COMPONENT;
 
   signal counter : integer range 0 to 2048 := 0;
   signal b_counter : integer range 0 to 23 := 0;
-  signal doutb : std_logic;
+  signal wea : std_logic_vector(0 downto 0);
+  signal addra : std_logic_vector(10 downto 0);
+  signal dina : std_logic_vector(23 downto 0);
+  
 
 begin
 
@@ -90,11 +93,11 @@ begin
 	if(falling_edge(b_clk)) then
 		if(b_counter = 23) then
 			b_counter <= 0;
-			wea <= '1';
+			wea <= "1";
 			counter <= counter + 1;
 		else
 			b_counter <= b_counter + 1;
-			wea <= '0';
+			wea <= "0";
 		end if;
 		dina(b_counter) <= sdata_out;
 	end if;
