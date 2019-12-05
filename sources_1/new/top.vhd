@@ -237,5 +237,10 @@ begin
 			b_clk => audio_out_clk,
 			sdata_out => audio_out_data
 		);
+		
+		
+	--audio loopback signals:
+	sdata_out <= audio_out_data;
+	b_clk <= audio_out_clk;
 	
 end Behavioral;

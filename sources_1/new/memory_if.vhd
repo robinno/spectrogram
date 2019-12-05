@@ -58,10 +58,11 @@ COMPONENT FIFO
 END COMPONENT;
 
   signal counter : integer range 0 to 2048 := 0;
-  -- signal b_counter : integer range 0 to 23 := 0;
-  signal wea : std_logic_vector(0 downto 0) := (others => '1');
-  signal addra : std_logic_vector(10 downto 0) := (others => '1');
-  signal dina : std_logic_vector(23 downto 0) := (others => '1');
+  signal wea : std_logic_vector(0 downto 0) := (others => '0');
+  signal addra : std_logic_vector(10 downto 0) := (others => '0');
+  signal dina : std_logic_vector(23 downto 0) := (others => '0');
+  
+  signal dout_parallel : std_logic_vector(23 downto 0) := (others => '0');
   
 
 begin
@@ -79,37 +80,40 @@ inst_fifo : FIFO
   );
   
 -- make addra
-process
-begin
-	if(counter = 2048) then
-		counter <= 0;
-	end if;
-	addra <= std_logic_vector(to_unsigned(counter, addra'length));
-end process;
+addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
 -- write parallel data in dina
-process 
+process(b_clk)
 begin
-	if(wea = "1") then
-		dina <= dout_parallel;
-		counter <= counter + 1;
+	if(rising_edge(b_clk)) then
+		if(wea = "1") then
+			dina <= dout_parallel;
+			
+			counter <= counter + 1;
+			
+			if(counter = 2048) then
+				counter <= 0;
+			end if;
+		end if;
 	end if;
 end process;
 
 --SIPO
 process(b_clk)
-variable b_counter : integer range 0 to 23 := 0;
+	variable b_counter : integer range 0 to 23 := 0;
 begin
 	if(rising_edge(b_clk)) then
 		dout_parallel <= dout_parallel(22 downto 0) & sdata_out;
 		b_counter := b_counter + 1;
+		
+		if(b_counter = 23) then
+			wea <= "1";
+			b_counter := 0;
+		else
+			wea <= "0";
+		end if;
+	
 	end if;
-	if(b_counter = 23) then
-		wea <= "1";
-		b_counter := 0;
-	else
-		wea <= "0";
-end if;
 end process;
 
 end Behavioral;

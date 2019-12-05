@@ -184,7 +184,7 @@ begin
 	VGA_B <= RGB(3 downto 0);
 
 	-- WRITING:
-	process(new_entry_clk)
+	process(new_entry_clk, X, new_entry)
 		variable Y: integer range 0 to Hoogte := circ_Y_start;
 	begin
 		if(rising_edge(new_entry_clk)) then
