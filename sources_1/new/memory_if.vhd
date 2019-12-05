@@ -59,7 +59,7 @@ END COMPONENT;
 
   signal counter : integer range 0 to 2048 := 0;
   signal b_counter : integer range 0 to 23 := 0;
-  signal doutb : std_logic;
+  --signal doutb : std_logic;
 
 begin
 
