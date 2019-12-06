@@ -1,8 +1,8 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Fri Nov 29 13:17:08 2019
--- Host        : LAPTOP-69E4OMV9 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
+-- Date        : Fri Nov 29 13:17:18 2019
+-- Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub -rename_top window -prefix
 --               window_ window_stub.vhdl
 -- Design      : window

@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
-// Date        : Fri Nov 29 13:14:39 2019
+// Date        : Thu Dec  5 12:10:51 2019
 // Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim
-//               C:/VHDL_Spectrogram/VHDL_Spectrogram.srcs/sources_1/ip/FIFO/FIFO_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim -rename_top FIFO -prefix
+//               FIFO_ FIFO_sim_netlist.v
 // Design      : FIFO
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -203,7 +203,6 @@ module FIFO
         .web(1'b0));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module FIFO_blk_mem_gen_generic_cstr
    (doutb,
     clka,
@@ -251,7 +250,6 @@ module FIFO_blk_mem_gen_generic_cstr
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module FIFO_blk_mem_gen_prim_width
    (doutb,
     clka,
@@ -329,7 +327,6 @@ module FIFO_blk_mem_gen_prim_width__parameterized0
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper" *) 
 module FIFO_blk_mem_gen_prim_wrapper
    (doutb,
     clka,
@@ -740,7 +737,6 @@ module FIFO_blk_mem_gen_prim_wrapper__parameterized0
         .WEBWE({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0}));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module FIFO_blk_mem_gen_top
    (doutb,
     clka,
@@ -804,7 +800,7 @@ endmodule
 (* C_WEA_WIDTH = "1" *) (* C_WEB_WIDTH = "1" *) (* C_WRITE_DEPTH_A = "2048" *) 
 (* C_WRITE_DEPTH_B = "2048" *) (* C_WRITE_MODE_A = "NO_CHANGE" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
 (* C_WRITE_WIDTH_A = "24" *) (* C_WRITE_WIDTH_B = "24" *) (* C_XDEVICEFAMILY = "zynq" *) 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4" *) (* downgradeipidentifiedwarnings = "yes" *) 
+(* downgradeipidentifiedwarnings = "yes" *) 
 module FIFO_blk_mem_gen_v8_4_4
    (clka,
     rsta,
@@ -1050,7 +1046,6 @@ module FIFO_blk_mem_gen_v8_4_4
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4_synth" *) 
 module FIFO_blk_mem_gen_v8_4_4_synth
    (doutb,
     clka,
