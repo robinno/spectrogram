@@ -113,6 +113,7 @@ architecture Behavioral of fft_controller is
     signal s_event_tlast_missing :  STD_LOGIC;
     signal s_event_data_in_channel_halt :  STD_LOGIC;
 	signal s_din_valid : STD_LOGIC;
+	signal conf_valid : STD_LOGIC := '0';
 	
 	signal fifo_full: STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
@@ -131,7 +132,7 @@ begin
 		aclk => clk,
 		aresetn => '1',--s_aresetn,
 		s_axis_config_tdata => x"01",
-		s_axis_config_tvalid => '0',--s_din_valid,
+		s_axis_config_tvalid => conf_valid,
 		s_axis_config_tready => s_s_axis_tready,
 		s_axis_data_tdata(tdata_width-1 downto din_width) => (others => '0'),
 		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
@@ -179,6 +180,17 @@ begin
 				fifo_full <= '0';
 			else
 				fifo_full <= '1';
+			end if;
+		end if;
+	end process;
+	
+	process(clk) --conf_valid maken
+	begin
+		if(rising_edge(clk))then
+			if(counter_in < transform_length-5) then
+				conf_valid <= '1';
+			else
+				conf_valid <= '0';
 			end if;
 		end if;
 	end process;
