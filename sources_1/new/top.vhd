@@ -50,7 +50,11 @@ entity top is
 		sdata : in std_logic;
 		sdata_out : out std_logic;
 		sda : out std_logic;
-		scl : out std_logic
+		scl : out std_logic;
+		
+		--TEST: TODO: wegdoen
+		O_output_FFT_valid: out std_logic;
+		O_output_FFT_last: out std_logic
 	);
 end top;
 
@@ -247,5 +251,9 @@ begin
 	--audio loopback signals:
 	sdata_out <= audio_out_data;
 	b_clk <= audio_out_clk;
+	
+	--TEST: TODO: wegdoen
+	O_output_FFT_valid <= output_FFT_valid;
+	O_output_FFT_last <= output_FFT_last;
 	
 end Behavioral;

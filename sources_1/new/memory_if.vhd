@@ -89,8 +89,6 @@ process(b_clk)
 begin
 	if(rising_edge(b_clk)) then
 		if(wea = "1") then
-			dina <= dout_parallel;
-			
 			if(counter = 2047) then
 				counter <= 0;
 			else
@@ -106,15 +104,15 @@ process(b_clk)
 begin
 	if(rising_edge(b_clk)) then
 		dout_parallel <= dout_parallel(22 downto 0) & sdata_out;
-		b_counter := b_counter + 1;
 		
 		if(b_counter = 23) then
-			wea <= "1";
 			b_counter := 0;
+			wea <= "1";
+			dina <= dout_parallel;
 		else
+			b_counter := b_counter + 1;
 			wea <= "0";
 		end if;
-	
 	end if;
 end process;
 
