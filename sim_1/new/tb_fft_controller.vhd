@@ -90,8 +90,8 @@ architecture Behavioral of tb_fft_controller is
 	signal dout_last :STD_LOGIC;
 	signal dout_counter: integer range 0 to transform_length-1;
 	
-	constant PERIOD : time := 1ns;
-	constant PERIOD_48k: time := PERIOD*2083;
+	constant PERIOD : time := 3ns;
+	constant PERIOD_48k: time := PERIOD*50;
 	
 begin
 

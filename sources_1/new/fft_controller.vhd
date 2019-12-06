@@ -103,7 +103,8 @@ architecture Behavioral of fft_controller is
 	--Signals for fft_ip
     signal s_aresetn :  STD_LOGIC := '1';
     signal s_s_axis_tready :  STD_LOGIC; --connected to 's_axis_config_tready' and 's_s_axis_data_tready'
-    signal s_s_axis_data_tlast :  STD_LOGIC := '0';
+    signal data_tlast :  STD_LOGIC := '0';
+	signal data_tlast_prev :  STD_LOGIC := '0';
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
@@ -112,6 +113,7 @@ architecture Behavioral of fft_controller is
 	
 	signal fifo_full: STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
+	signal fifo_read_prev: STD_LOGIC := '0';
 	signal blk_exp: natural range 0 to (2**blk_exp_length) -1;
 	signal fft_dout: STD_LOGIC_VECTOR(din_width-1 downto 0);
 	signal counter_fft : integer range 0 to transform_length-1;
@@ -131,7 +133,7 @@ begin
 		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
 		s_axis_data_tvalid => s_din_valid,
 		s_axis_data_tready => open,
-		s_axis_data_tlast => s_s_axis_data_tlast,
+		s_axis_data_tlast => data_tlast,
 		m_axis_data_tdata(tdata_width-1 downto din_width) => temp,--liever open maar werkt niet
 		m_axis_data_tdata(din_width-1 downto 0) => fft_dout,
 		m_axis_data_tuser => s_m_axis_data_tuser,
@@ -166,7 +168,7 @@ begin
 		P => mult_out
 	  );
 	
-	process(clk) --fifo_full en fifo_read maken
+	process(clk) --fifo_full
 	begin
 		if(rising_edge(clk))then
 			if(counter_in < transform_length-1) then
@@ -174,34 +176,38 @@ begin
 			else
 				fifo_full <= '1';
 			end if;
-			
-			if(fifo_full = '1' or counter_fft > 2) then
-				fifo_read <= '1';
-			else
-				fifo_read <= '0';
-			end if;
-			s_din_valid <= fifo_read;--1 tick latency for valid to compensate latency of window multiplication
 		end if;
 	end process;
 	
 	process(clk)
 	begin
 		if(rising_edge(clk))then
-			if(fifo_read = '1') then
-				if(counter_fft < transform_length-1) then
+			fifo_read_prev <= fifo_read;
+			s_din_valid <= fifo_read_prev;
+			data_tlast <= data_tlast_prev;
+			if(fifo_full = '1') then
+				if( counter_fft = 0) then -- eerste sample
+					counter_fft <= 1;
+					fifo_read <= '1';
+				else --volgende samples
+					fifo_read <= '1';
 					counter_fft <= counter_fft + 1;
-					if(counter_fft = transform_length-2) then
-						s_s_axis_data_tlast <= '1';
-					else
-						s_s_axis_data_tlast <= '0';
-					end if;
-				else
-					counter_fft <= 0;
-					s_s_axis_data_tlast <= '0';
 				end if;
-			else
-				counter_fft <= 0;
-				s_s_axis_data_tlast <= '0';
+				data_tlast_prev <= '0';
+			else --fifo full = 0
+				if(counter_fft > 0 and counter_fft < transform_length-1) then --laatste samples
+					fifo_read <= '1';
+					counter_fft <= counter_fft + 1;
+					if(counter_fft = transform_length-1)then --op counter_fft = 2047 maak data_tlast_prev = 1
+						data_tlast_prev <= '1';
+					else
+						data_tlast_prev <= '0';
+					end if;
+				else -- laatste sample is genomen uit fifo
+					fifo_read <= '0';
+					counter_fft <= 0;
+					data_tlast_prev <= '0';
+				end if;
 			end if;
 		end if;
 	end process;
