@@ -37,6 +37,8 @@ entity memory_if is
 		 addrb : in std_logic_vector (10 downto 0);
 		 doutb : out std_logic_vector (23 downto 0);
 		 
+		 counter_out : out integer range 0 to 2047;
+		 
 		 -- van audiointerface
 		 b_clk : in std_logic;
 		 sdata_out : in std_logic);
