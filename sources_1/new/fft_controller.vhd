@@ -104,7 +104,8 @@ architecture Behavioral of fft_controller is
     signal s_aresetn :  STD_LOGIC := '1';
     signal s_s_axis_tready :  STD_LOGIC; --connected to 's_axis_config_tready' and 's_s_axis_data_tready'
     signal data_tlast :  STD_LOGIC := '0';
-	signal data_tlast_prev :  STD_LOGIC := '0';
+	signal data_tlast_prev1 :  STD_LOGIC := '0';
+	signal data_tlast_prev2 :  STD_LOGIC := '0';
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
@@ -184,7 +185,8 @@ begin
 		if(rising_edge(clk))then
 			fifo_read_prev <= fifo_read;
 			s_din_valid <= fifo_read_prev;
-			data_tlast <= data_tlast_prev;
+			data_tlast <= data_tlast_prev2;
+			data_tlast_prev2 <= data_tlast_prev1;
 			if(fifo_full = '1') then
 				if( counter_fft = 0) then -- eerste sample
 					counter_fft <= 1;
@@ -193,20 +195,20 @@ begin
 					fifo_read <= '1';
 					counter_fft <= counter_fft + 1;
 				end if;
-				data_tlast_prev <= '0';
+				data_tlast_prev1 <= '0';
 			else --fifo full = 0
 				if(counter_fft > 0 and counter_fft < transform_length-1) then --laatste samples
 					fifo_read <= '1';
 					counter_fft <= counter_fft + 1;
-					if(counter_fft = transform_length-1)then --op counter_fft = 2047 maak data_tlast_prev = 1
-						data_tlast_prev <= '1';
+					if(counter_fft = transform_length-2)then --op counter_fft = 2046 maak data_tlast_prev1 = 1
+						data_tlast_prev1 <= '1';
 					else
-						data_tlast_prev <= '0';
+						data_tlast_prev1 <= '0';
 					end if;
 				else -- laatste sample is genomen uit fifo
 					fifo_read <= '0';
 					counter_fft <= 0;
-					data_tlast_prev <= '0';
+					data_tlast_prev1 <= '0';
 				end if;
 			end if;
 		end if;
