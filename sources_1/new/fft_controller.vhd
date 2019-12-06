@@ -116,7 +116,8 @@ architecture Behavioral of fft_controller is
 	
 	signal fifo_full: STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
-	signal fifo_read_prev: STD_LOGIC := '0';
+	signal fifo_read_prev1: STD_LOGIC := '0';
+	signal fifo_read_prev2: STD_LOGIC := '0';
 	signal blk_exp: natural range 0 to (2**blk_exp_length) -1;
 	signal fft_dout: STD_LOGIC_VECTOR(din_width-1 downto 0);
 	signal counter_fft : integer range 0 to transform_length-1;
@@ -130,7 +131,7 @@ begin
 		aclk => clk,
 		aresetn => '1',--s_aresetn,
 		s_axis_config_tdata => x"01",
-		s_axis_config_tvalid => s_din_valid,
+		s_axis_config_tvalid => '1',--s_din_valid,
 		s_axis_config_tready => s_s_axis_tready,
 		s_axis_data_tdata(tdata_width-1 downto din_width) => (others => '0'),
 		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
@@ -185,8 +186,10 @@ begin
 	process(clk)
 	begin
 		if(rising_edge(clk))then
-			fifo_read_prev <= fifo_read;
-			s_din_valid <= fifo_read_prev;
+			s_din_valid <= fifo_read_prev1;
+			fifo_read_prev1 <= fifo_read_prev2;
+			fifo_read_prev2 <= fifo_read;
+
 			data_tlast <= data_tlast_prev3;
 			data_tlast_prev3 <= data_tlast_prev2;
 			data_tlast_prev2 <= data_tlast_prev1;

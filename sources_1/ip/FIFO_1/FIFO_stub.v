@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
-// Date        : Thu Dec  5 12:10:51 2019
+// Date        : Fri Dec  6 13:10:51 2019
 // Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode synth_stub -rename_top FIFO -prefix
-//               FIFO_ FIFO_stub.v
+// Command     : write_verilog -force -mode synth_stub
+//               C:/VHDL_Spectrogram/VHDL_Spectrogram.srcs/sources_1/ip/FIFO_1/FIFO_stub.v
 // Design      : FIFO
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z020clg484-1
