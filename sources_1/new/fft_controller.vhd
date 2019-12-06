@@ -131,7 +131,7 @@ begin
 		aclk => clk,
 		aresetn => '1',--s_aresetn,
 		s_axis_config_tdata => x"01",
-		s_axis_config_tvalid => '1',--s_din_valid,
+		s_axis_config_tvalid => '0',--s_din_valid,
 		s_axis_config_tready => s_s_axis_tready,
 		s_axis_data_tdata(tdata_width-1 downto din_width) => (others => '0'),
 		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
