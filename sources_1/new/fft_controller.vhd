@@ -187,7 +187,7 @@ begin
 	process(clk) --conf_valid maken
 	begin
 		if(rising_edge(clk))then
-			if(counter_in < transform_length-5) then
+			if(counter_in = transform_length-5) then
 				conf_valid <= '1';
 			else
 				conf_valid <= '0';
