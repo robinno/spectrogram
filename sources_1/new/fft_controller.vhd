@@ -101,11 +101,13 @@ architecture Behavioral of fft_controller is
 	signal mult_out : STD_LOGIC_VECTOR(23 DOWNTO 0);
 	
 	--Signals for fft_ip
-    signal s_aresetn :  STD_LOGIC := '1';
+    -- signal s_aresetn :  STD_LOGIC := '1';
     signal s_s_axis_tready :  STD_LOGIC; --connected to 's_axis_config_tready' and 's_s_axis_data_tready'
     signal data_tlast :  STD_LOGIC := '0';
 	signal data_tlast_prev1 :  STD_LOGIC := '0';
 	signal data_tlast_prev2 :  STD_LOGIC := '0';
+	signal data_tlast_prev3 :  STD_LOGIC := '0';
+	signal TEST : STD_LOGIC;	
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
@@ -126,7 +128,7 @@ begin
 	INST_fft_ip : fft_ip
 	  PORT MAP (
 		aclk => clk,
-		aresetn => s_aresetn,
+		aresetn => '1',--s_aresetn,
 		s_axis_config_tdata => x"01",
 		s_axis_config_tvalid => s_din_valid,
 		s_axis_config_tready => s_s_axis_tready,
@@ -185,8 +187,10 @@ begin
 		if(rising_edge(clk))then
 			fifo_read_prev <= fifo_read;
 			s_din_valid <= fifo_read_prev;
-			data_tlast <= data_tlast_prev2;
+			data_tlast <= data_tlast_prev3;
+			data_tlast_prev3 <= data_tlast_prev2;
 			data_tlast_prev2 <= data_tlast_prev1;
+			
 			if(fifo_full = '1') then
 				if( counter_fft = 0) then -- eerste sample
 					counter_fft <= 1;
