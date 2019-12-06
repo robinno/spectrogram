@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
--- Date        : Fri Nov 29 13:14:39 2019
+-- Date        : Thu Dec  5 12:10:51 2019
 -- Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               C:/VHDL_Spectrogram/VHDL_Spectrogram.srcs/sources_1/ip/FIFO/FIFO_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top FIFO -prefix
+--               FIFO_ FIFO_sim_netlist.vhdl
 -- Design      : FIFO
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -25,8 +25,6 @@ entity FIFO_blk_mem_gen_prim_wrapper is
     addrb : in STD_LOGIC_VECTOR ( 10 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_prim_wrapper : entity is "blk_mem_gen_prim_wrapper";
 end FIFO_blk_mem_gen_prim_wrapper;
 
 architecture STRUCTURE of FIFO_blk_mem_gen_prim_wrapper is
@@ -443,8 +441,6 @@ entity FIFO_blk_mem_gen_prim_width is
     addrb : in STD_LOGIC_VECTOR ( 10 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end FIFO_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of FIFO_blk_mem_gen_prim_width is
@@ -509,8 +505,6 @@ entity FIFO_blk_mem_gen_generic_cstr is
     addrb : in STD_LOGIC_VECTOR ( 10 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 23 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end FIFO_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of FIFO_blk_mem_gen_generic_cstr is
@@ -553,8 +547,6 @@ entity FIFO_blk_mem_gen_top is
     addrb : in STD_LOGIC_VECTOR ( 10 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 23 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end FIFO_blk_mem_gen_top;
 
 architecture STRUCTURE of FIFO_blk_mem_gen_top is
@@ -586,8 +578,6 @@ entity FIFO_blk_mem_gen_v8_4_4_synth is
     addrb : in STD_LOGIC_VECTOR ( 10 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 23 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
 end FIFO_blk_mem_gen_v8_4_4_synth;
 
 architecture STRUCTURE of FIFO_blk_mem_gen_v8_4_4_synth is
@@ -824,8 +814,6 @@ entity FIFO_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_WIDTH_B of FIFO_blk_mem_gen_v8_4_4 : entity is 24;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of FIFO_blk_mem_gen_v8_4_4 : entity is "zynq";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of FIFO_blk_mem_gen_v8_4_4 : entity is "blk_mem_gen_v8_4_4";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of FIFO_blk_mem_gen_v8_4_4 : entity is "yes";
 end FIFO_blk_mem_gen_v8_4_4;

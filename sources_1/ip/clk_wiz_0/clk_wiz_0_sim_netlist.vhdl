@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
--- Date        : Fri Nov 29 12:12:10 2019
+-- Date        : Thu Dec  5 12:07:02 2019
 -- Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               C:/VHDL_Spectrogram/VHDL_Spectrogram.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top clk_wiz_0 -prefix
+--               clk_wiz_0_ clk_wiz_0_sim_netlist.vhdl
 -- Design      : clk_wiz_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -22,8 +22,6 @@ entity clk_wiz_0_clk_wiz_0_clk_wiz is
     clk_audio : out STD_LOGIC;
     sys_clk : in STD_LOGIC
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of clk_wiz_0_clk_wiz_0_clk_wiz : entity is "clk_wiz_0_clk_wiz";
 end clk_wiz_0_clk_wiz_0_clk_wiz;
 
 architecture STRUCTURE of clk_wiz_0_clk_wiz_0_clk_wiz is

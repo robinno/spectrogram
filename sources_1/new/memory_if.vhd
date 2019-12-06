@@ -59,7 +59,7 @@ COMPONENT FIFO
   );
 END COMPONENT;
 
-  signal counter : integer range 0 to 2048 := 0;
+  signal counter : integer range 0 to 2047 := 0;
   signal wea : std_logic_vector(0 downto 0) := (others => '0');
   signal addra : std_logic_vector(10 downto 0) := (others => '0');
   signal dina : std_logic_vector(23 downto 0) := (others => '0');
@@ -91,10 +91,10 @@ begin
 		if(wea = "1") then
 			dina <= dout_parallel;
 			
-			counter <= counter + 1;
-			
-			if(counter = 2048) then
+			if(counter = 2047) then
 				counter <= 0;
+			else
+				counter <= counter + 1;
 			end if;
 		end if;
 	end if;
@@ -117,5 +117,7 @@ begin
 	
 	end if;
 end process;
+
+counter_out <= counter;
 
 end Behavioral;
