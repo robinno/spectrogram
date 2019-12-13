@@ -40,8 +40,8 @@ entity memory_if is
 		 counter_out : out integer range 0 to 2047;
 		 
 		 -- van audiointerface
-		 b_clk : in std_logic;
-		 sdata_out : in std_logic);
+		 clka : in std_logic;
+		 input : in std_logic_vector(23 downto 0));
 end memory_if;
 
 architecture Behavioral of memory_if is
@@ -71,10 +71,10 @@ begin
 
 inst_fifo : FIFO
   PORT MAP (
-    clka => b_clk,
+    clka => clka,
     wea => wea,
     addra => addra,
-    dina => dina,
+    dina => input,
     clkb => clkb,
     enb => enb,
     addrb => addrb,
@@ -85,33 +85,15 @@ inst_fifo : FIFO
 addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
 -- write parallel data in dina
-process(b_clk)
+process(clka)
 begin
-	if(rising_edge(b_clk)) then
+	if(rising_edge(clka)) then
 		if(wea = "1") then
 			if(counter = 2047) then
 				counter <= 0;
 			else
 				counter <= counter + 1;
 			end if;
-		end if;
-	end if;
-end process;
-
---SIPO
-process(b_clk)
-	variable b_counter : integer range 0 to 23 := 0;
-begin
-	if(rising_edge(b_clk)) then
-		dout_parallel <= dout_parallel(22 downto 0) & sdata_out;
-		
-		if(b_counter = 23) then
-			b_counter := 0;
-			wea <= "1";
-			dina <= dout_parallel;
-		else
-			b_counter := b_counter + 1;
-			wea <= "0";
 		end if;
 	end if;
 end process;
