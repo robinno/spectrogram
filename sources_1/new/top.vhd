@@ -43,7 +43,7 @@ entity top is
 		VGA_b_out : out STD_LOGIC_VECTOR (3 downto 0);
 		
 		--audiocodec:
-		-- i2c_addr : out std_logic_vector(1 downto 0);
+		i2c_addr : out std_logic_vector(1 downto 0);
 		m_clk : out std_logic;
 		b_clk : out std_logic;
 		lr_clk : out std_logic;
@@ -122,7 +122,7 @@ architecture Behavioral of top is
 		sdata : in std_logic;
 		sda : out std_logic;
 		scl : out std_logic;
-		-- i2c_addr : out std_logic_vector(1 downto 0);
+		i2c_addr : out std_logic_vector(1 downto 0);
 
 
 		-- audio output interface
@@ -226,7 +226,7 @@ begin
 		sdata => sdata,
 		sda => sda,
 		scl => scl,
-		-- i2c_addr => i2c_addr,
+		i2c_addr => i2c_addr,
 		sample_clk => sample_clk,
 		sample_l => sample_l,
 		sample_r => sample_r,
