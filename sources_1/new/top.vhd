@@ -140,8 +140,8 @@ architecture Behavioral of top is
 			 counter_out : out integer range 0 to 2047;
 			 
 			 -- van audiointerface
-			 b_clk : in std_logic;
-			 sdata_out : in std_logic);
+			 clka : in std_logic;
+			 input : in std_logic_vector(23 downto 0));
 	end component;
 	
 	--clk signalen
@@ -239,8 +239,8 @@ begin
 			
 			counter_out => read_FIFO_counter_in,
 					 
-			b_clk => audio_out_clk,
-			sdata_out => audio_out_data
+			clka => sample_clk,
+			input => sample_l
 		);
 		
 		
