@@ -34,6 +34,8 @@ use UNISIM.VComponents.all;
 entity adau1761_if is
     Port ( lr_clk : in STD_LOGIC;
            b_clk : in STD_LOGIC;
+		   clk_12M288 : in std_logic;
+		   b_clk_en : in std_logic;
            sdata : in STD_LOGIC;
            sample_l : out STD_LOGIC_VECTOR (23 downto 0);
            sample_r : out STD_LOGIC_VECTOR (23 downto 0);
@@ -57,6 +59,7 @@ architecture Behavioral of adau1761_if is
 	signal s_sample_clk_en : std_logic;
 
     signal s_sample: std_logic_vector(63 downto 0) := (others => '0');
+	signal s_sample_clk_en_comb : std_logic;
 
 begin
 
@@ -105,12 +108,14 @@ begin
 
 	sample_l <= s_sample_l_out;
 	sample_r <= s_sample_r_out;
+	
+	s_sample_clk_en_comb <= s_sample_clk_en and b_clk_en;
 
 	BUFGCE_inst : BUFGCE
 		port map (
 			O => sample_clk,   -- 1-bit output: Clock output
-			CE => s_sample_clk_en, -- 1-bit input: Clock enable input for I0
-			I => b_clk   -- 1-bit input: Primary clock
+			CE => s_sample_clk_en_comb, -- 1-bit input: Clock enable input for I0
+			I => clk_12M288   -- 1-bit input: Primary clock
 		);
 
 

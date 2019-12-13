@@ -80,6 +80,8 @@ architecture Behavioral of audio_if is
 		Port (
 			lr_clk : in STD_LOGIC;
 			b_clk : in STD_LOGIC;
+			clk_12M288 : in std_logic;
+		    b_clk_en : in std_logic;
 			sdata : in STD_LOGIC;
 			sample_l : out STD_LOGIC_VECTOR (23 downto 0);
 			sample_r : out STD_LOGIC_VECTOR (23 downto 0);
@@ -92,6 +94,8 @@ architecture Behavioral of audio_if is
 	end component;
 
 	-- signal s_clk_12M288 : std_logic;
+	
+	signal clk_12m288 : std_logic;
 
     signal s_sample_l_in: std_logic_vector (23 downto 0);
     signal s_sample_r_in: std_logic_vector (23 downto 0);
@@ -225,6 +229,9 @@ begin
 		Port map(
 			lr_clk => s_lr_clk_en,
 			b_clk => s_b_clk_real,
+			clk_12M288 => clk_12M288,
+			
+		    b_clk_en => s_b_clk_real_en,
 			sdata => sdata,
 			sample_l => s_sample_l,
 			sample_r => s_sample_r,
