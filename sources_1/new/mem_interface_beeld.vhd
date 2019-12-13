@@ -153,15 +153,18 @@ architecture Behavioral of mem_interface_beeld is
 	constant circ_X_stop: integer := 665;
 	constant circ_Y_stop: integer := 543;
 	
-	signal X: integer range 0 to Breedte := circ_X_start; --houdt bij waar in circulaire buffer.
+	signal writeX: integer range 0 to Breedte := circ_X_start; --houdt bij waar in circulaire buffer.
 	
 	--signals for reading:
 	signal LeesAdres: std_logic_vector(18 downto 0) := (others => '0');
 	signal LeesData: std_logic_vector(6 downto 0) := (others => '0');
 	signal RGB: std_logic_vector(11 downto 0) := (others => '0');
 	signal inCircBuffer: std_logic := '0';
+	signal readX: integer range 0 to Breedte := 0;
 	
 	--signals for writing:
+	signal new_entry_last_edge: std_logic := '0';
+	
 	signal writeAdres: std_logic_vector(18 downto 0) := (others => '0');
 	signal writeData: std_logic_vector(6 downto 0) := (others => '0');
 	signal wea: std_logic_vector(0 downto 0) := (others => '0');
@@ -173,7 +176,12 @@ begin
 						else '0';
 	
 	--TODO: leesAdres aanpassen adhv inCircBuffer
-	LeesAdres 	<= 	std_logic_vector(to_unsigned(VGA_Y * Breedte + VGA_X, 19)) when active_video = '1' else
+	readX 	<= 	(VGA_X + writeX - circ_X_start) when (VGA_X + writeX - circ_X_start) < circ_X_stop else
+				(VGA_X - (writeX - circ_X_start));
+			
+	
+	LeesAdres 	<= 	--std_logic_vector(to_unsigned(VGA_Y * Breedte + readX, 19)) when inCircBuffer = '1' else
+					std_logic_vector(to_unsigned(VGA_Y * Breedte + VGA_X, 19)) when active_video = '1' else
 					(others => '0');
 					
 	RGB 		<= 	kleurArray(to_integer(unsigned(leesData))) when active_video = '1' else
@@ -184,31 +192,46 @@ begin
 	VGA_B <= RGB(3 downto 0);
 
 	-- WRITING:
-	process(new_entry_clk, X, new_entry)
-		variable Y: integer range 0 to Hoogte := circ_Y_start;
+	process(new_entry_clk) --edge detection op new_entry_last
+		variable prev_new_entry_last: std_logic := '0';
+	begin
+		if(rising_edge(new_entry_clk)) then
+			if(prev_new_entry_last = '0' and new_entry_last = '1') then
+				new_entry_last_edge <= '1';
+			else 
+				new_entry_last_edge <= '0';
+			end if;
+			
+			prev_new_entry_last := new_entry_last;
+		end if;
+	end process;
+	
+	process(new_entry_clk, writeX, new_entry)
+		variable writeY: integer range 0 to Hoogte := circ_Y_start;
 	begin
 		if(rising_edge(new_entry_clk)) then
 			if(new_entry_valid = '1') then
 				wea <= (others => '1');
 				
-				Y := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 2048;
+				writeY := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 2048;
 			else
 				wea <= (others => '0');
 			end if;
 			
-			if(new_entry_last = '1') then
-				Y := circ_Y_start;
-				if(X >= circ_X_stop) then
-					X <= circ_X_start; 
+			if(new_entry_last_edge = '1') then
+				writeY := circ_Y_start;
+				if(writeX >= circ_X_stop) then
+					writeX <= circ_X_start; 
 				else
-					X <= X + 1;
+					writeX <= writeX + 1;
 				end if;
 			end if;
 			
 			
 		end if;
-		writeAdres 	<= 	std_logic_vector(to_unsigned(X + Y * Breedte, 19));
-		writeData	<= 	new_entry;
+		writeAdres 	<= 	std_logic_vector(to_unsigned(writeX + writeY * Breedte, 19));
+		writeData	<= 	'0' & new_entry(6 downto 1);--std_logic_vector(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127, 7)); --map range 0-127 to 0-75
+						--TEST: => TODO
 	end process;
 	
 	--TESTING:
