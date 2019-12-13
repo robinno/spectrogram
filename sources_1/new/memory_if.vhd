@@ -86,11 +86,10 @@ inst_fifo : FIFO
 addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
 -- write data in dina
-process(contr_clk)
+process(contr_clk, last_clk, clka)
 begin
 	if(rising_edge(contr_clk)) then
 		if(last_clk = '0' and clka = '1') then
-			last_clk <= clka;
 			wea <= (others => '1');
 			if(counter = 2047) then
 				counter <= 0;
