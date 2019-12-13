@@ -49,7 +49,3 @@ set_property IOSTANDARD LVCMOS18 [get_ports sdata_out]
 set_property IOSTANDARD LVCMOS18 [get_ports {i2c_addr[1]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {i2c_addr[0]}]
 
-set_property PACKAGE_PIN Y11 [get_ports O_output_FFT_last]
-set_property PACKAGE_PIN AA11 [get_ports O_output_FFT_valid]
-set_property IOSTANDARD LVCMOS18 [get_ports O_output_FFT_last]
-set_property IOSTANDARD LVCMOS18 [get_ports O_output_FFT_valid]
