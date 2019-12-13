@@ -216,7 +216,7 @@ begin
 			if(new_entry_valid = '1') then
 				wea <= (others => '1');
 				
-				writeY := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 2048;
+				writeY := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 1024;
 			else
 				wea <= (others => '0');
 			end if;
