@@ -161,6 +161,7 @@ architecture Behavioral of mem_interface_beeld is
 	signal RGB: std_logic_vector(11 downto 0) := (others => '0');
 	signal inCircBuffer: std_logic := '0';
 	signal readX: integer range 0 to Breedte := 0;
+	signal writeXvast: integer range 0 to Breedte := circ_X_start; --houdt bij waar in circulaire buffer, vast voor 1 frame
 	
 	--signals for writing:
 	signal new_entry_last_edge: std_logic := '0';
@@ -171,16 +172,18 @@ architecture Behavioral of mem_interface_beeld is
 begin
 
 	--READING:
-	inCircBuffer <= '1' when 	(VGA_X > circ_X_start) and (VGA_X < circ_X_stop) and
-								(VGA_Y > circ_Y_start) and (VGA_Y < circ_Y_stop)
+	inCircBuffer <= '1' when 	(VGA_X >= circ_X_start) and (VGA_X <= circ_X_stop) and
+								(VGA_Y >= circ_Y_start) and (VGA_Y <= circ_Y_stop)
 						else '0';
 	
-	--TODO: leesAdres aanpassen adhv inCircBuffer
-	readX 	<= 	(VGA_X + writeX - circ_X_start) when (VGA_X + writeX - circ_X_start) < circ_X_stop else
-				(VGA_X - (writeX - circ_X_start));
+	writeXvast 	<=  (writeX + 1)	when (VGA_Y = 0) 
+									else writeXvast;
+	
+	readX 	<= 	(VGA_X + writeXvast - circ_X_start) when (VGA_X <= (circ_X_stop - (writeXvast-circ_X_start)))  else
+				(VGA_X + writeXvast - circ_X_stop);
 			
 	
-	LeesAdres 	<= 	--std_logic_vector(to_unsigned(VGA_Y * Breedte + readX, 19)) when inCircBuffer = '1' else
+	LeesAdres 	<= 	std_logic_vector(to_unsigned(VGA_Y * Breedte + readX, 19)) when inCircBuffer = '1' else
 					std_logic_vector(to_unsigned(VGA_Y * Breedte + VGA_X, 19)) when active_video = '1' else
 					(others => '0');
 					
