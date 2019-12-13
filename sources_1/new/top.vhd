@@ -142,7 +142,7 @@ architecture Behavioral of top is
 			 -- van audiointerface
 			 clk_samples : in std_logic;
 			 input : in std_logic_vector(23 downto 0);
-			 main_clk : in std_logic);
+			 mem_full : out std_logic);
 	end component;
 	
 	--clk signalen
@@ -169,6 +169,7 @@ architecture Behavioral of top is
 	--signalen tussen audio en FIFO
 	signal audio_out_clk : std_logic := '0';
 	signal audio_out_data : std_logic := '0';
+	signal mem_full : std_logic := '0';
 	
 begin
 
@@ -242,7 +243,7 @@ begin
 					 
 			clk_samples => sample_clk,
 			input => sample_l,
-			main_clk => clk_96MHz
+			mem_full => mem_full
 		);
 		
 		
