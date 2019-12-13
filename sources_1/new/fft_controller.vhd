@@ -108,6 +108,7 @@ architecture Behavioral of fft_controller is
 	signal data_tlast_prev3 :  STD_LOGIC := '0';
 	signal data_tlast_prev4 :  STD_LOGIC := '0';
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
+	signal valid_fft_out : STD_LOGIC;
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
     signal s_event_data_in_channel_halt :  STD_LOGIC;
@@ -142,7 +143,7 @@ begin
 		m_axis_data_tdata(tdata_width-1 downto din_width) => temp,--liever open maar werkt niet
 		m_axis_data_tdata(din_width-1 downto 0) => fft_dout,
 		m_axis_data_tuser => s_m_axis_data_tuser,
-		m_axis_data_tvalid => dout_valid,
+		m_axis_data_tvalid => valid_fft_out,
 		m_axis_data_tlast => dout_last,
 		m_axis_status_tdata => open,
 		m_axis_status_tvalid => open,
@@ -176,6 +177,21 @@ begin
 	begin
 		if(rising_edge(clk))then
 			conf_valid <= '0';--AXI transfer for configuration occurs on first edge
+		end if;
+	end process;
+	
+	process(clk) --valid and dout_last voor helft van frame
+	begin
+		if(valid_fft_out = '1' and dout_counter < 1024) then
+			dout_valid <= '1';
+		else
+			dout_valid <= '0';
+		end if;
+		
+		if(dout_counter = 1023) then
+			dout_last <= '1';
+		else
+			dout_last <= '0';
 		end if;
 	end process;
 	
