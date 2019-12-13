@@ -108,7 +108,6 @@ architecture Behavioral of fft_controller is
 	signal data_tlast_prev3 :  STD_LOGIC := '0';
 	signal data_tlast_prev4 :  STD_LOGIC := '0';
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
-	signal valid_fft_out : STD_LOGIC;
     signal s_event_tlast_unexpected :  STD_LOGIC;
     signal s_event_tlast_missing :  STD_LOGIC;
     signal s_event_data_in_channel_halt :  STD_LOGIC;
@@ -116,6 +115,7 @@ architecture Behavioral of fft_controller is
 	signal data_ready : STD_LOGIC;
 	signal conf_valid : STD_LOGIC := '1';
 	
+	signal fifo_full: STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
 	signal fifo_read_prev1: STD_LOGIC := '0';
 	signal fifo_read_prev2: STD_LOGIC := '0';
@@ -143,7 +143,7 @@ begin
 		m_axis_data_tdata(tdata_width-1 downto din_width) => temp,--liever open maar werkt niet
 		m_axis_data_tdata(din_width-1 downto 0) => fft_dout,
 		m_axis_data_tuser => s_m_axis_data_tuser,
-		m_axis_data_tvalid => valid_fft_out,
+		m_axis_data_tvalid => dout_valid,
 		m_axis_data_tlast => dout_last,
 		m_axis_status_tdata => open,
 		m_axis_status_tvalid => open,
@@ -155,7 +155,7 @@ begin
 	
 	blk_exp <= to_integer(unsigned(s_m_axis_data_tuser(20 downto 16) ));
 	--dout <= shift_left(unsigned(fft_dout), blk_exp);
-	dout <= std_logic_vector(abs(signed(fft_dout(23 downto 23-(dout_width-1)))));
+	dout <= fft_dout(dout_width-1 downto 0);
 	dout_counter <= to_integer(unsigned(s_m_axis_data_tuser(10 downto 0) ));
 	
 	INST_window : window
@@ -180,18 +180,14 @@ begin
 		end if;
 	end process;
 	
-	process(clk) --valid and dout_last voor helft van frame
+	process(clk) --fifo_full
 	begin
-		if(valid_fft_out = '1' and dout_counter < 1024) then
-			dout_valid <= '1';
-		else
-			dout_valid <= '0';
-		end if;
-		
-		if(dout_counter = 1023) then
-			dout_last <= '1';
-		else
-			dout_last <= '0';
+		if(rising_edge(clk))then
+			if(counter_in < transform_length-1) then
+				fifo_full <= '0';
+			else
+				fifo_full <= '1';
+			end if;
 		end if;
 	end process;
 	
