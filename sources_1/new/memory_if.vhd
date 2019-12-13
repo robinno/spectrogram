@@ -72,7 +72,7 @@ begin
 
 inst_fifo : FIFO
   PORT MAP (
-    clka => clka,
+    clka => contr_clk,
     wea => wea,
     addra => addra,
     dina => input,
