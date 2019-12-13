@@ -61,7 +61,7 @@ COMPONENT FIFO
 END COMPONENT;
 
   signal counter : integer range 0 to 2047 := 0;
-  signal wea : std_logic_vector(0 downto 0) := (others => '0');
+  signal wea : std_logic_vector(0 downto 0) := (others => '1');
   signal addra : std_logic_vector(10 downto 0) := (others => '0');
   signal dina : std_logic_vector(23 downto 0) := (others => '0');
   
@@ -72,7 +72,7 @@ begin
 
 inst_fifo : FIFO
   PORT MAP (
-    clka => main_clk,
+    clka => clk_samples,
     wea => wea,
     addra => addra,
     dina => input,
@@ -86,20 +86,14 @@ inst_fifo : FIFO
 addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
 -- write data in dina
-process(main_clk, last_clk, clk_samples)
+process(clk_samples)
 begin
-	if(rising_edge(main_clk)) then
-		if(last_clk = '0' and clk_samples = '1') then
-			wea <= (others => '1');
-			if(counter = 2047) then
-				counter <= 0;
-			else
-				counter <= counter + 1;
-			end if;
+	if(rising_edge(clk_samples)) then
+		if(counter = 2047) then
+			counter <= 0;
 		else
-			wea <= (others => '0');
+			counter <= counter + 1;
 		end if;
-		last_clk <= clk_samples;
 	end if;
 end process;
 
