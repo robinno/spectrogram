@@ -176,8 +176,8 @@ begin
 								(VGA_Y >= circ_Y_start) and (VGA_Y <= circ_Y_stop)
 						else '0';
 	
-	writeXvast 	<=  (writeX + 1)	when (VGA_Y = 0) 
-									else writeXvast;
+	writeXvast 	<=  (writeX + 1)	when (VGA_Y = 0);
+									--else writeXvast;
 	
 	readX 	<= 	(VGA_X + writeXvast - circ_X_start) when (VGA_X <= (circ_X_stop - (writeXvast-circ_X_start)))  else
 				(VGA_X + writeXvast - circ_X_stop);

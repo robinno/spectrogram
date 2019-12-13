@@ -48,4 +48,3 @@ set_property IOSTANDARD LVCMOS18 [get_ports sdata]
 set_property IOSTANDARD LVCMOS18 [get_ports sdata_out]
 set_property IOSTANDARD LVCMOS18 [get_ports {i2c_addr[1]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {i2c_addr[0]}]
-
