@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2019.2 (win64) Build 2700185 Thu Oct 24 18:46:05 MDT 2019
-// Date        : Thu Dec  5 12:09:00 2019
-// Host        : LAPTOP-RBTKMPRA running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode funcsim -rename_top DUAL_PORT_RAM -prefix
-//               DUAL_PORT_RAM_ DUAL_PORT_RAM_sim_netlist.v
+// Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
+// Date        : Sun Dec  8 14:39:29 2019
+// Host        : LAPTOP-69E4OMV9 running 64-bit major release  (build 9200)
+// Command     : write_verilog -force -mode funcsim {D:/Ing/Master
+//               1sem/Digitale/VHDL_Spectrogram/VHDL_Spectrogram.srcs/sources_1/ip/DUAL_PORT_RAM/DUAL_PORT_RAM_sim_netlist.v}
 // Design      : DUAL_PORT_RAM
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -200,6 +200,7 @@ module DUAL_PORT_RAM
         .web(1'b0));
 endmodule
 
+(* ORIG_REF_NAME = "bindec" *) 
 module DUAL_PORT_RAM_bindec
    (enb_array,
     addrb);
@@ -221,6 +222,7 @@ module DUAL_PORT_RAM_bindec
         .O(enb_array));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module DUAL_PORT_RAM_blk_mem_gen_generic_cstr
    (doutb,
     clka,
@@ -1538,6 +1540,7 @@ module DUAL_PORT_RAM_blk_mem_gen_mux__parameterized0
         .R(1'b0));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module DUAL_PORT_RAM_blk_mem_gen_prim_width
    (DOUTB,
     clka,
@@ -3764,6 +3767,7 @@ module DUAL_PORT_RAM_blk_mem_gen_prim_width__parameterized9
         .dina(dina));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper_init" *) 
 module DUAL_PORT_RAM_blk_mem_gen_prim_wrapper_init
    (DOUTB,
     clka,
@@ -28391,6 +28395,7 @@ module DUAL_PORT_RAM_blk_mem_gen_prim_wrapper_init__parameterized9
         .WEBWE({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0}));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module DUAL_PORT_RAM_blk_mem_gen_top
    (doutb,
     clka,
@@ -28450,7 +28455,7 @@ endmodule
 (* C_WEA_WIDTH = "1" *) (* C_WEB_WIDTH = "1" *) (* C_WRITE_DEPTH_A = "480000" *) 
 (* C_WRITE_DEPTH_B = "480000" *) (* C_WRITE_MODE_A = "NO_CHANGE" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
 (* C_WRITE_WIDTH_A = "7" *) (* C_WRITE_WIDTH_B = "7" *) (* C_XDEVICEFAMILY = "zynq" *) 
-(* downgradeipidentifiedwarnings = "yes" *) 
+(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4" *) (* downgradeipidentifiedwarnings = "yes" *) 
 module DUAL_PORT_RAM_blk_mem_gen_v8_4_4
    (clka,
     rsta,
@@ -28676,6 +28681,7 @@ module DUAL_PORT_RAM_blk_mem_gen_v8_4_4
         .wea(wea));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4_synth" *) 
 module DUAL_PORT_RAM_blk_mem_gen_v8_4_4_synth
    (doutb,
     clka,
