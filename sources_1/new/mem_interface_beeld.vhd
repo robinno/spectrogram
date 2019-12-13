@@ -233,8 +233,7 @@ begin
 			
 		end if;
 		writeAdres 	<= 	std_logic_vector(to_unsigned(writeX + writeY * Breedte, 19));
-		writeData	<= 	--'0' & new_entry(6 downto 1);
-						std_logic_vector(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127, 7)); --map range 0-127 to 0-75
+		writeData	<= 	'0' & new_entry(6 downto 1);--std_logic_vector(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127, 7)); --map range 0-127 to 0-75
 						--TEST: => TODO
 	end process;
 	
