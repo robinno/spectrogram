@@ -154,7 +154,7 @@ begin
 	
 	blk_exp <= to_integer(unsigned(s_m_axis_data_tuser(20 downto 16) ));
 	--dout <= shift_left(unsigned(fft_dout), blk_exp);
-	dout <= fft_dout(23 downto 23-(dout_width-1));
+	dout <= std_logic_vector(abs(signed(fft_dout(23 downto 23-(dout_width-1)))));
 	dout_counter <= to_integer(unsigned(s_m_axis_data_tuser(10 downto 0) ));
 	
 	INST_window : window

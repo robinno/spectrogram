@@ -43,7 +43,7 @@ entity audio_if is
 		sdata : in std_logic;
 		sda : out std_logic;
 		scl : out std_logic;
-		i2c_addr : out std_logic_vector(1 downto 0);
+		-- i2c_addr : out std_logic_vector(1 downto 0);
 
 
 		-- audio output interface
@@ -375,7 +375,7 @@ begin
 
 	sda <= s_sda;
 	scl <= s_scl;
-	i2c_addr <= (others => '0');
+	-- i2c_addr <= (others => '0');
 
 	-- i2c clock
 	process(clk_100M_in)
