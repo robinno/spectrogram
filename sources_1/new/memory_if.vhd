@@ -40,9 +40,9 @@ entity memory_if is
 		 counter_out : out integer range 0 to 2047;
 		 
 		 -- van audiointerface
-		 clka : in std_logic;
+		 clk_samples : in std_logic;
 		 input : in std_logic_vector(23 downto 0);
-		 contr_clk : in std_logic);
+		 main_clk : in std_logic);
 end memory_if;
 
 architecture Behavioral of memory_if is
@@ -72,7 +72,7 @@ begin
 
 inst_fifo : FIFO
   PORT MAP (
-    clka => contr_clk,
+    clka => main_clk,
     wea => wea,
     addra => addra,
     dina => input,
@@ -86,10 +86,10 @@ inst_fifo : FIFO
 addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
 -- write data in dina
-process(contr_clk, last_clk, clka)
+process(main_clk, last_clk, clk_samples)
 begin
-	if(rising_edge(contr_clk)) then
-		if(last_clk = '0' and clka = '1') then
+	if(rising_edge(main_clk)) then
+		if(last_clk = '0' and clk_samples = '1') then
 			wea <= (others => '1');
 			if(counter = 2047) then
 				counter <= 0;
@@ -99,7 +99,7 @@ begin
 		else
 			wea <= (others => '0');
 		end if;
-		last_clk <= clka;
+		last_clk <= clk_samples;
 	end if;
 end process;
 
