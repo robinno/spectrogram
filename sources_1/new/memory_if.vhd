@@ -61,7 +61,7 @@ COMPONENT FIFO
 END COMPONENT;
 
   signal counter : integer range 0 to 2047 := 0;
-  signal wea : std_logic_vector(0 downto 0) := (others => '1');
+  signal wea : std_logic_vector(0 downto 0) := (others => '0');
   signal addra : std_logic_vector(10 downto 0) := (others => '0');
   signal dina : std_logic_vector(23 downto 0) := (others => '0');
   
@@ -89,18 +89,18 @@ addra <= std_logic_vector(to_unsigned(counter, addra'length));
 process(contr_clk)
 begin
 	if(rising_edge(contr_clk)) then
-		if(clka = last_clk) then
+		if(last_clk = '0' and clka = '1') then
 			last_clk <= clka;
-		else
-			if(wea = "1") then
-				if(counter = 2047) then
-					counter <= 0;
-				else
-					counter <= counter + 1;
-				end if;
+			wea <= (others => '1');
+			if(counter = 2047) then
+				counter <= 0;
+			else
+				counter <= counter + 1;
 			end if;
-			last_clk <= contr_clk;
+		else
+			wea <= (others => '0');
 		end if;
+		last_clk <= clka;
 	end if;
 end process;
 
