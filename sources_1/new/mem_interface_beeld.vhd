@@ -216,7 +216,7 @@ begin
 			if(new_entry_valid = '1') then
 				wea <= (others => '1');
 				
-				writeY := circ_Y_start + ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 1024;
+				writeY := circ_Y_stop - ((circ_Y_stop-circ_Y_start) * new_entry_counter) / 1024;
 			else
 				wea <= (others => '0');
 			end if;
@@ -234,7 +234,7 @@ begin
 		end if;
 		writeAdres 	<= 	std_logic_vector(to_unsigned(writeX + writeY * Breedte, 19));
 		writeData	<= 	--'0' & new_entry(6 downto 1);
-						std_logic_vector(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127      *   5, 7)); --map range 0-127 to 0-75
+						std_logic_vector(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127      *   10, 7)); --map range 0-127 to 0-75
 						--TEST: => TODO
 	end process;
 	

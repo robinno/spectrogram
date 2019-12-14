@@ -93,10 +93,6 @@ architecture Behavioral of audio_if is
 		);
 	end component;
 
-	-- signal s_clk_12M288 : std_logic;
-	
-	signal clk_12m288 : std_logic;
-
     signal s_sample_l_in: std_logic_vector (23 downto 0);
     signal s_sample_r_in: std_logic_vector (23 downto 0);
     signal s_sdata_out: std_logic;
@@ -229,7 +225,7 @@ begin
 		Port map(
 			lr_clk => s_lr_clk_en,
 			b_clk => s_b_clk_real,
-			clk_12M288 => clk_12M288,
+			clk_12M288 => s_clk_12M288,
 			
 		    b_clk_en => s_b_clk_real_en,
 			sdata => sdata,

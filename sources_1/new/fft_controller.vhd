@@ -200,7 +200,7 @@ begin
 	process(clk)
 	begin
 		if(rising_edge(clk))then
-			if(data_ready = '1') then
+			--if(data_ready = '1') then
 				
 				s_din_valid <= fifo_read_prev1;
 				fifo_read_prev1 <= fifo_read_prev2;
@@ -213,11 +213,10 @@ begin
 				data_tlast_prev2 <= data_tlast_prev1;
 				
 				if(counter_in >= transform_length-1) then --fifo is full
+					fifo_read <= '1';
 					if( fifo_read = '0' and counter_fft = 0) then -- sample 0
 						counter_fft <= 0;
-						fifo_read <= '1';
 					else --volgende samples
-						fifo_read <= '1';
 						counter_fft <= counter_fft + 1;
 					end if;
 					data_tlast_prev1 <= '0';
@@ -236,17 +235,17 @@ begin
 						data_tlast_prev1 <= '0';
 					end if;
 				end if;
-			else --don't change anything when fft_ip did not take data
-				s_din_valid <= s_din_valid;
-				fifo_read_prev1 <= fifo_read_prev1;
-				fifo_read_prev2 <= fifo_read_prev2;
-				data_tlast <= data_tlast;
-				data_tlast_prev3 <= data_tlast_prev3;
-				data_tlast_prev2 <= data_tlast_prev2;
-				data_tlast_prev1 <= data_tlast_prev1;
-				counter_fft <= counter_fft;
-				fifo_read <= fifo_read;
-			end if;
+			-- else --don't change anything when fft_ip did not take data
+				-- s_din_valid <= s_din_valid;
+				-- fifo_read_prev1 <= fifo_read_prev1;
+				-- fifo_read_prev2 <= fifo_read_prev2;
+				-- data_tlast <= data_tlast;
+				-- data_tlast_prev3 <= data_tlast_prev3;
+				-- data_tlast_prev2 <= data_tlast_prev2;
+				-- data_tlast_prev1 <= data_tlast_prev1;
+				-- counter_fft <= counter_fft;
+				-- fifo_read <= fifo_read;
+			-- end if;
 		end if;
 	end process;
 	ena_ram <= fifo_read;
@@ -256,3 +255,4 @@ begin
 
 
 end Behavioral;
+
