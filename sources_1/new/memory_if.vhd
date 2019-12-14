@@ -42,7 +42,7 @@ entity memory_if is
 		 -- van audiointerface
 		 clk_samples : in std_logic;
 		 input : in std_logic_vector(23 downto 0);
-		 main_clk : in std_logic);
+		 mem_full : out std_logic);
 end memory_if;
 
 architecture Behavioral of memory_if is
@@ -91,8 +91,10 @@ begin
 	if(rising_edge(clk_samples)) then
 		if(counter = 2047) then
 			counter <= 0;
+			mem_full <= '1';
 		else
 			counter <= counter + 1;
+			mem_full <= '0';
 		end if;
 	end if;
 end process;
