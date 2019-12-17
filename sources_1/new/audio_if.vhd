@@ -88,8 +88,6 @@ architecture Behavioral of audio_if is
 	signal s_b_clk_cntr : integer range 0 to 64;
 	signal s_lr_clk_en : std_logic;
 	signal s_b_clk_en : std_logic;
-	-- signal s_lr_clk : std_logic;
-	-- signal s_b_clk : std_logic;
 	signal s_b_clk_real : std_logic;
 	signal s_b_clk_real_en : std_logic;
 
