@@ -88,8 +88,8 @@ architecture Behavioral of audio_if is
 	signal s_b_clk_cntr : integer range 0 to 64;
 	signal s_lr_clk_en : std_logic;
 	signal s_b_clk_en : std_logic;
-	signal s_lr_clk : std_logic;
-	signal s_b_clk : std_logic;
+	-- signal s_lr_clk : std_logic;
+	-- signal s_b_clk : std_logic;
 	signal s_b_clk_real : std_logic;
 	signal s_b_clk_real_en : std_logic;
 
@@ -101,6 +101,7 @@ architecture Behavioral of audio_if is
 	signal s_scl : std_logic;
 	signal s_i2c_clk : std_logic;
 
+	-- for i2c state machine
 	type i2c_state is (st_init, st_start, st_start_2, st_send_vector_1, st_send_vector_2, st_send_vector_3, st_stop, st_stop_2, st_stop_3, st_stop_4);
 	signal s_i2c_state : i2c_state;
 
