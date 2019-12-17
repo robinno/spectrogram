@@ -63,6 +63,7 @@ architecture Behavioral of adau1761_if is
 
 begin
 
+	-- read data
 	process(b_clk)
 	begin
 		if rising_edge(b_clk) then
@@ -99,6 +100,7 @@ begin
 		end if;
 	end process;
 	
+	-- give data to sdata_out
 	process(b_clk)
 	begin
 	   if(falling_edge(b_clk)) then
@@ -111,6 +113,8 @@ begin
 	
 	s_sample_clk_en_comb <= s_sample_clk_en and b_clk_en;
 
+	-- create bufgce signal: multiplex the clock signal and clock enable signal. This operation reduces the wiring.
+	-- clock and clock enable signals are driven to N sequential components by a single wire.
 	BUFGCE_inst : BUFGCE
 		port map (
 			O => sample_clk,   -- 1-bit output: Clock output

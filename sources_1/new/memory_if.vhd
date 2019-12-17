@@ -32,7 +32,8 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity memory_if is
-	port(clkb : in std_logic;
+	port(-- voor fft controller
+		 clkb : in std_logic;
 		 enb : in std_logic;
 		 addrb : in std_logic_vector (10 downto 0);
 		 doutb : out std_logic_vector (23 downto 0);
@@ -63,10 +64,6 @@ END COMPONENT;
   signal counter : integer range 0 to 2047 := 0;
   signal wea : std_logic_vector(0 downto 0) := (others => '1');
   signal addra : std_logic_vector(10 downto 0) := (others => '0');
-  signal dina : std_logic_vector(23 downto 0) := (others => '0');
-  
-  signal dout_parallel : std_logic_vector(23 downto 0) := (others => '0');
-  signal last_clk : std_logic;
 
 begin
 
@@ -85,7 +82,7 @@ inst_fifo : FIFO
 -- make addra
 addra <= std_logic_vector(to_unsigned(counter, addra'length));
 
--- write data in dina
+-- update counter for addra and update mem_full
 process(clk_samples)
 begin
 	if(rising_edge(clk_samples)) then

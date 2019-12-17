@@ -132,7 +132,8 @@ architecture Behavioral of top is
 	end component;
 	
 	component memory_if is
-		port(clkb : in std_logic;
+		port(-- voor fft controller
+			 clkb : in std_logic;
 			 enb : in std_logic;
 			 addrb : in std_logic_vector (10 downto 0);
 			 doutb : out std_logic_vector (23 downto 0);
@@ -151,6 +152,7 @@ architecture Behavioral of top is
 	signal Audio_clk: std_logic := '0';
 	signal clk_96MHz: std_logic := '0';
 	
+	-- audio_if signalen
 	signal sample_clk : std_logic := '0';
 	signal sample_l, sample_r : std_logic_vector(23 downto 0) := (others => '0'); --loopback
 	
@@ -247,7 +249,7 @@ begin
 		);
 		
 		
-	--audio loopback signals:
+	-- audio loopback signals:
 	sdata_out <= audio_out_data;
 	b_clk <= audio_out_clk;
 	
