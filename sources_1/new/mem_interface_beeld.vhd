@@ -200,7 +200,7 @@ BEGIN
 	-------------
  
 	PROCESS (new_entry_clk, writeX, new_entry)
-	VARIABLE writeY : INTEGER RANGE 0 TO Hoogte := circ_Y_start;
+		VARIABLE writeY : INTEGER RANGE 0 TO Hoogte := circ_Y_start;
 	BEGIN
 		IF (rising_edge(new_entry_clk)) THEN
 			IF (new_entry_valid = '1') THEN
