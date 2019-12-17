@@ -59,23 +59,10 @@ end audio_if;
 
 architecture Behavioral of audio_if is
 
-	-- component clk_wiz_1
-		-- port(-- Clock in ports
-			-- clk_in1           : in     std_logic;
-			-- Clock out ports
-			-- clk_100M          : out    std_logic;
-			-- clk_12M288          : out    std_logic;
-			-- Status and control signals
-			-- reset             : in     std_logic;
-			-- locked            : out    std_logic
-		-- );
-	-- end component;
-
 	ATTRIBUTE SYN_BLACK_BOX : BOOLEAN;
-	-- ATTRIBUTE SYN_BLACK_BOX OF clk_wiz_1 : COMPONENT IS TRUE;
 	ATTRIBUTE BLACK_BOX_PAD_PIN : STRING;
-	-- ATTRIBUTE BLACK_BOX_PAD_PIN OF clk_wiz_1 : COMPONENT IS "clk_in1,clk_100M,clk_12M288,reset,locked";
 
+	-- audio codec
 	component adau1761_if
 		Port (
 			lr_clk : in STD_LOGIC;
@@ -200,23 +187,6 @@ constant s_i2c_vector : i2c_reg_array := (
 
 begin
 
-	-- INST_ILA_0 : ila_0
-		-- PORT MAP (
-			-- clk => s_sample_clk,
-			-- probe1(0) => s_lr_clk_en,
-			-- probe1(1) => s_b_clk_en,
-			-- probe1(2) => s_b_clk_real,
-			-- probe1(3) => s_b_clk_real_en,
-			-- probe1(4) => sdata,
-			-- probe1(5) => s_sda,
-			-- probe1(6) => s_scl,
-			-- probe1(15 downto 7) => (others => '0'),
-			-- probe2(0) => s_lr_clk_en,
-			-- probe2(15 downto 1) => (others => '0'),
-			-- probe1 => s_sample_l,
-			-- probe0 => s_sample_r
-		-- );
-
 	lr_clk <= s_lr_clk_en;
 	b_clk <= s_b_clk_en;
 	m_clk <= s_clk_12M288;
@@ -244,18 +214,6 @@ begin
     s_sample_l_in <= sample_l_in;
     s_sample_r_in <= sample_r_in;
     sdata_out <= s_sdata_out; 
-
-	-- INST_AUDIO_SAMPLE_CLK : clk_wiz_1
-		-- port map (
-			-- Clock in ports
-			-- clk_in1 => clk_100M_in,
-			-- Clock out ports
-			-- clk_100M => open,
-			-- clk_12M288 => s_clk_12M288,
-			-- Status and control signals
-			-- reset => '0',
-			-- locked => open
-		-- );
 
 	-- generate lr_clk and b_clk
 	process(s_clk_12M288)
