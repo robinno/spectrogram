@@ -1,26 +1,24 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- Company:
+-- Engineer:
+--
 -- Create Date: 30.09.2019 10:13:12
--- Design Name: 
+-- Design Name:
 -- Module Name: VGA_driver - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
+-- Project Name:
+-- Target Devices:
+-- Tool Versions:
+-- Description:
+--
+-- Dependencies:
+--
 -- Revision:
 -- Revision 0.01 - File Created
 -- Additional Comments:
--- 
+--
 ----------------------------------------------------------------------------------
-
-
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -31,65 +29,67 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity VGA_driver is --gekozen voor 800x600 
-    Port (	clk : in STD_LOGIC;
+ENTITY VGA_driver IS --gekozen voor 800x600
+	PORT (
+		clk               : IN STD_LOGIC;
 
-			Flag_Active_Video: out STD_LOGIC;
-			LineCount: out integer range 0 to 628; 	--verticale positie
-			PixelCount: out integer range 0 to 1056;	--horizontale positie
-			
-			Vsync : out STD_LOGIC;
-			Hsync : out STD_LOGIC);
-end VGA_driver;
+		Flag_Active_Video : OUT STD_LOGIC;
+		VGA_X             : OUT INTEGER RANGE 0 TO 1056; --horizontale positie
+		VGA_Y             : OUT INTEGER RANGE 0 TO 628; --verticale positie
+ 
+		Vsync             : OUT STD_LOGIC;
+		Hsync             : OUT STD_LOGIC
+	);
+END VGA_driver;
 
-architecture Behavioral of VGA_driver is
+ARCHITECTURE Behavioral OF VGA_driver IS
 
-begin
-
-	process(clk)
-		variable HTeller : integer range 0 to 1056 := 0; 		--horizontale positie
-		variable VTeller : integer range 0 to 628 := 0; 		--vericale positie
-	begin
-		
-		if(rising_edge(clk)) then
-			
+BEGIN
+	PROCESS (clk)
+		VARIABLE HTeller : INTEGER RANGE 0 TO 1056 := 0; --horizontale positie
+		VARIABLE VTeller : INTEGER RANGE 0 TO 628 := 0; --vericale positie
+	BEGIN
+		IF (rising_edge(clk)) THEN
+ 
 			--update HTeller & VTeller
-			
 			HTeller := HTeller + 1;
-			
-			if(HTeller >= 1056) then
+ 
+			IF (HTeller >= 1056) THEN
 				HTeller := 0;
 				VTeller := VTeller + 1;
-			end if;
-			
-			if(VTeller >= 628) then
+			END IF;
+ 
+			IF (VTeller >= 628) THEN
 				VTeller := 0;
-			end if;
-			
-			
+			END IF;
+ 
+ 
 			--genereren signalen:
-			
-			case Hteller is 
-				when 840 to 968 => 	Hsync <= '0'; --case: hij neemt de bovenste grens ook mee 
-				when others => 		Hsync <= '1';
-			end case;
-			
-			case Vteller is 
-				when 601 to 605 => 	Vsync <= '0';
-				when others  => 	Vsync <= '1';
-			end case;
+			CASE Hteller IS
+				WHEN 840 TO 968 => 
+					Hsync <= '0';
+				WHEN OTHERS => 
+					Hsync <= '1';
+			END CASE;
+ 
+			CASE Vteller IS
+				WHEN 601 TO 605 => 
+					Vsync <= '0';
+				WHEN OTHERS => 
+					Vsync <= '1';
+			END CASE;
 
 			--active video?
-			if ( HTeller < 800 and VTeller < 600) then
+			IF (HTeller < 800 AND VTeller < 600) THEN
 				Flag_Active_Video <= '1';
-			else
+			ELSE
 				Flag_Active_Video <= '0';
-			end if;
+			END IF;
 
-		end if;
-		
-		PixelCount <= HTeller;
-		LineCount <= VTeller;
-	end process;
+		END IF;
+ 
+		VGA_X <= HTeller;
+		VGA_Y <= VTeller;
+	END PROCESS;
 
-end Behavioral;
+END Behavioral;
