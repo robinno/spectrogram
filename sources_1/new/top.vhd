@@ -76,6 +76,7 @@ architecture Behavioral of top is
 		);
 		Port (
 			clk : in STD_LOGIC;
+			fifo_full: in STD_LOGIC;
 			counter_in : in integer range 0 to transform_length-1;
 			addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
 			dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
@@ -132,8 +133,7 @@ architecture Behavioral of top is
 	end component;
 	
 	component memory_if is
-		port(-- voor fft controller
-			 clkb : in std_logic;
+		port(clkb : in std_logic;
 			 enb : in std_logic;
 			 addrb : in std_logic_vector (10 downto 0);
 			 doutb : out std_logic_vector (23 downto 0);
@@ -152,7 +152,6 @@ architecture Behavioral of top is
 	signal Audio_clk: std_logic := '0';
 	signal clk_96MHz: std_logic := '0';
 	
-	-- audio_if signalen
 	signal sample_clk : std_logic := '0';
 	signal sample_l, sample_r : std_logic_vector(23 downto 0) := (others => '0'); --loopback
 	
@@ -206,6 +205,7 @@ begin
 	fft_controller_inst: fft_controller
 		Port map(
 			clk => FFT_clk,
+			fifo_full => mem_full,
 			counter_in => read_FIFO_counter_in,
 			addr_ram => read_FIFO_addr,
 			dout_ram => read_FIFO_data,
@@ -249,7 +249,7 @@ begin
 		);
 		
 		
-	-- audio loopback signals:
+	--audio loopback signals:
 	sdata_out <= audio_out_data;
 	b_clk <= audio_out_clk;
 	

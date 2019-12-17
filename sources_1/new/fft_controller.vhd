@@ -41,6 +41,7 @@ entity fft_controller is
 	);
 	Port (
 		clk : in STD_LOGIC;
+		fifo_full: in STD_LOGIC;
 		counter_in : in integer range 0 to transform_length-1;
 		addr_ram : OUT STD_LOGIC_VECTOR(10 downto 0);
 		dout_ram : IN STD_LOGIC_VECTOR(din_width-1 downto 0);
@@ -102,11 +103,6 @@ architecture Behavioral of fft_controller is
 	
 	--Signals for fft_ip
     signal conf_ready :  STD_LOGIC;
-    signal data_tlast :  STD_LOGIC := '0';
-	signal data_tlast_prev1 :  STD_LOGIC := '0';
-	signal data_tlast_prev2 :  STD_LOGIC := '0';
-	signal data_tlast_prev3 :  STD_LOGIC := '0';
-	signal data_tlast_prev4 :  STD_LOGIC := '0';
     signal s_m_axis_data_tuser :  STD_LOGIC_VECTOR(23 downto 0);
 	signal valid_fft_out : STD_LOGIC;
 	signal s_dout_counter : integer range 0 to transform_length-1;
@@ -117,10 +113,13 @@ architecture Behavioral of fft_controller is
 	signal data_ready : STD_LOGIC;
 	signal conf_valid : STD_LOGIC := '1';
 	
+	constant fifo_read_lat_length: natural := 3;
+	signal fifo_read_lat: STD_LOGIC_VECTOR(fifo_read_lat_length-1 downto 0) := (others => '0');
+	constant din_last_lat_length: natural := 3;
+	signal din_last_lat: STD_LOGIC_VECTOR(din_last_lat_length-1 downto 0) := (others => '0');
+	signal data_tlast_fft :  STD_LOGIC := '0';
+	signal din_last :  STD_LOGIC := '0';
 	signal fifo_read: STD_LOGIC := '0';
-	signal fifo_read_prev1: STD_LOGIC := '0';
-	signal fifo_read_prev2: STD_LOGIC := '0';
-	signal fifo_read_prev3: STD_LOGIC := '0';
 	signal blk_exp: natural range 0 to (2**blk_exp_length) -1;
 	signal fft_dout: STD_LOGIC_VECTOR(din_width-1 downto 0);
 	signal counter_fft : integer range 0 to transform_length-1;
@@ -140,7 +139,7 @@ begin
 		s_axis_data_tdata(din_width-1 downto 0) => mult_out,
 		s_axis_data_tvalid => s_din_valid,
 		s_axis_data_tready => data_ready,
-		s_axis_data_tlast => data_tlast,
+		s_axis_data_tlast => data_tlast_fft,
 		m_axis_data_tdata(tdata_width-1 downto din_width) => temp,--liever open maar werkt niet
 		m_axis_data_tdata(din_width-1 downto 0) => fft_dout,
 		m_axis_data_tuser => s_m_axis_data_tuser,
@@ -155,8 +154,7 @@ begin
 	  );	
 	
 	blk_exp <= to_integer(unsigned(s_m_axis_data_tuser(20 downto 16) ));
-	--dout <= shift_left(unsigned(fft_dout), blk_exp);
-	dout <= std_logic_vector(abs(signed(fft_dout(23 downto 23-(dout_width-1)))));
+	dout <= std_logic_vector(abs(signed(fft_dout(19 downto 19-(dout_width-1)))));
 	s_dout_counter <= to_integer(unsigned(s_m_axis_data_tuser(10 downto 0) ));
 	dout_counter <= s_dout_counter;
 	
@@ -200,54 +198,62 @@ begin
 	process(clk)
 	begin
 		if(rising_edge(clk))then
-			--if(data_ready = '1') then
+			if(data_ready = '1') then
 				
-				s_din_valid <= fifo_read_prev1;
-				fifo_read_prev1 <= fifo_read_prev2;
-				fifo_read_prev2 <= fifo_read_prev3;
-				fifo_read_prev3 <= fifo_read;
-
-				data_tlast <= data_tlast_prev4;
-				data_tlast_prev4 <= data_tlast_prev3;
-				data_tlast_prev3 <= data_tlast_prev2;
-				data_tlast_prev2 <= data_tlast_prev1;
+				for i in 0 to fifo_read_lat_length-2 loop
+					fifo_read_lat(i) <= fifo_read_lat(i+1);
+				end loop;
+				fifo_read_lat(fifo_read_lat_length-1) <= fifo_read;
+				s_din_valid <= fifo_read_lat(0);
 				
-				if(counter_in >= transform_length-1) then --fifo is full
+				if(fifo_full = '1') then --fifo is full
 					fifo_read <= '1';
-					if( fifo_read = '0' and counter_fft = 0) then -- sample 0
+					if( fifo_read = '0') then -- sample 0
 						counter_fft <= 0;
 					else --volgende samples
 						counter_fft <= counter_fft + 1;
 					end if;
-					data_tlast_prev1 <= '0';
-				else --fifo full = 0
+				else
 					if(counter_fft > 0 and counter_fft < transform_length-1) then --laatste samples
 						fifo_read <= '1';
 						counter_fft <= counter_fft + 1;
-						if(counter_fft = transform_length-2)then --op counter_fft = 2046 maak data_tlast_prev1 = 1
-							data_tlast_prev1 <= '1';
-						else
-							data_tlast_prev1 <= '0';
-						end if;
 					else -- laatste sample is genomen uit fifo
 						fifo_read <= '0';
 						counter_fft <= 0;
-						data_tlast_prev1 <= '0';
 					end if;
 				end if;
-			-- else --don't change anything when fft_ip did not take data
-				-- s_din_valid <= s_din_valid;
-				-- fifo_read_prev1 <= fifo_read_prev1;
-				-- fifo_read_prev2 <= fifo_read_prev2;
-				-- data_tlast <= data_tlast;
-				-- data_tlast_prev3 <= data_tlast_prev3;
-				-- data_tlast_prev2 <= data_tlast_prev2;
-				-- data_tlast_prev1 <= data_tlast_prev1;
-				-- counter_fft <= counter_fft;
-				-- fifo_read <= fifo_read;
-			-- end if;
+			else --don't change anything when fft_ip did not take data
+				fifo_read <= fifo_read;
+				counter_fft <= counter_fft;
+				fifo_read_lat <= fifo_read_lat;
+				s_din_valid <= s_din_valid;
+			end if;
 		end if;
 	end process;
+	
+	process(clk)
+	begin
+		if(rising_edge(clk))then
+			if(data_ready = '1') then
+				for j in 0 to din_last_lat_length-2 loop
+					din_last_lat(j) <= din_last_lat(j+1);
+				end loop;
+				din_last_lat(din_last_lat_length-1) <= din_last;
+				data_tlast_fft <= din_last_lat(0);
+				
+				if(counter_fft = transform_length-2)then --op counter_fft = 2046 maak din_last = 1
+					din_last <= '1';
+				else
+					din_last <= '0';
+				end if;
+			else
+				din_last <= din_last;
+				din_last_lat <= din_last_lat;
+				data_tlast_fft <= data_tlast_fft;
+			end if;
+		end if;
+	end process;
+	
 	ena_ram <= fifo_read;
 	s_adr <= std_logic_vector(to_unsigned(counter_fft, 11));
 	addr_ram <= s_adr;
@@ -255,4 +261,3 @@ begin
 
 
 end Behavioral;
-

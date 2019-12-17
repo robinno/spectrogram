@@ -180,8 +180,8 @@ BEGIN
 	-- dat de update gebeurt terwijl het frame aan het opbouwen is (dan krijg je een vreemd effect op het scherm)
 	writeXvast <= (writeX + 1) WHEN (VGA_Y = 0);
  
-	readX <= (VGA_X + writeXvast - circ_X_start) WHEN (VGA_X <= (circ_X_stop - (writeXvast - circ_X_start))) ELSE
-	         (VGA_X + writeXvast - circ_X_stop);
+	readX <= (VGA_X + writeXvast - circ_X_stop - 2) WHEN (VGA_X >= (circ_X_stop - (writeXvast - circ_X_start))) ELSE
+	         (VGA_X + writeXvast - circ_X_start);
  
  
 	LeesAdres <= 	STD_LOGIC_VECTOR(to_unsigned(VGA_Y * Breedte + readX, 19)) WHEN inCircBuffer = '1' ELSE
@@ -221,7 +221,7 @@ BEGIN
 			END IF;
 		END IF;
 		writeAdres <= STD_LOGIC_VECTOR(to_unsigned(writeX + writeY * Breedte, 19));
-		writeData  <= STD_LOGIC_VECTOR(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127 * 10, 7)); --map range 0-127 to 0-75
+		writeData  <= STD_LOGIC_VECTOR(to_unsigned((to_integer(unsigned(new_entry)) * 75) / 127, 7)); --map range 0-127 to 0-75
 	END PROCESS;
  
  
